@@ -8,4 +8,4 @@ class AI
     public:
     AI();
     pii makemove(Board &board, int turn, int difficult);
-}
+};

@@ -13,4 +13,4 @@ class Game
     Game();
     void reset();
     void playmove(int i, int j);
-}
+};

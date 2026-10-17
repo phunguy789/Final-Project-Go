@@ -1,6 +1,6 @@
 #pragma once
-#include <Board.h>
-#include <AI.h>
+#include "Board.h"
+#include "AI.h"
 class Game
 {
     public:

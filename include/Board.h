@@ -1,5 +1,5 @@
 #pragma once
-const int  = 19;
+const int N = 19;
 class Board
 {
     public:

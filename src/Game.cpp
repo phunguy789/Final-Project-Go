@@ -6,7 +6,14 @@ Game::Game()
 }
 void Game::reset()
 {
-
+    board.reset();       
+    turn = 2;            
+    mode = 0;            
+    difficult = 1;       
+    gameOver = false;    
+    passCount = 0;       
+    while (!undoStack.empty()) undoStack.pop();
+    while (!redoStack.empty()) redoStack.pop();
 }
 bool Game::playMove(int i, int j)
 {
@@ -42,7 +49,7 @@ int Game::captureGroups(int i, int j)
 }
 bool Game::checkKo(int i, int j)
 {
-    return false;
+    return 0;
 }
 void Game::undo()
 {
@@ -54,9 +61,9 @@ void Game::redo()
 }
 bool Game::saveGame(const string& filename)
 {
-    return false;
+    return 0;
 }
 bool Game::loadGame(const string& filename)
 {
-    return false;
+    return 0;
 }

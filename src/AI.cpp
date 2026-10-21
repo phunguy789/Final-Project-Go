@@ -21,7 +21,7 @@ int AI::evaluate(Board &board, int turn)
     int scores = 0;
     return scores;
 }
-int minimax(Board &board, int depth, int turn, int aiturn)
+int AI::minimax(Board &board, int depth, int turn, int aiturn)
 {
     return 0;
 }

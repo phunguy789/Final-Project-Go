@@ -59,7 +59,7 @@ vector<pii> Game::getGroup(int i, int j)
 {
     vector<pii> interconnected;
     dfs(i, j, interconnected, board.a[i][j]);
-    return {};
+    return interconnected;
 }
 int Game::countLiberties(int i, int j)
 {

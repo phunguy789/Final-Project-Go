@@ -100,9 +100,23 @@ int Game::captureGroups(int i, int j)
     }
     return cnt_capture;
 }
+bool Game::isSameBoard(Board &This, Board &That)
+{
+    for (int i = 0; i < N; i++)
+    for (int j = 0; j < N; j++)
+        if (This.a[i][j] != That.a[i][j]) return 0;
+    return 1;
+}
 bool Game::checkKo(int i, int j)
 {
-    return 0;
+    Board state_before = undoStack.top();
+    undoStack.pop();
+    if (isSameBoard(undoStack.top(), board))
+    {
+        undoStack.push(state_before);
+        return 0;
+    }
+    return 1;
 }
 void Game::undo()
 {

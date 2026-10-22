@@ -62,9 +62,8 @@ vector<pii> Game::getGroup(int i, int j)
     dfs(i, j, interconnected, board.a[i][j]);
     return interconnected;
 }
-int Game::countLiberties(int i, int j)
+int Game::countLiberties(vector<pii> &group)
 {
-    vector<pii> group = getGroup(i, j);
     memset(vis, 0, sizeof vis);
     int Lib_count = -(int)(group.size());
     for (pii &pos : group)
@@ -86,7 +85,20 @@ int Game::countLiberties(int i, int j)
 }
 int Game::captureGroups(int i, int j)
 {
-    return 0;
+    int cnt_capture = 0;
+    for (int i = 0; i < 4; i++)
+    {
+        int x = i + d1[i], y = j + d2[i];
+        if (min(x, y) < 0 || max(x, y) >= N || board.a[x][y] == board.a[i][j])
+            continue;
+        vector<pii> group = getGroup(x, y);
+        if (countLiberties(group) == 0)
+        {
+            cnt_capture += (int)group.size();
+            for (pii &p : group) board.a[p.first][p.second] = 0;
+        }
+    }
+    return cnt_capture;
 }
 bool Game::checkKo(int i, int j)
 {

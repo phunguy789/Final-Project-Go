@@ -30,7 +30,7 @@ class Game
 
     bool isValidMove(int i, int j);
     vector<pii> getGroup(int i, int j);
-    int countLiberties(int i, int j);
+    int countLiberties(vector<pii> &group);
     int captureGroups(int i, int j);
     bool checkKo(int i, int j);
 

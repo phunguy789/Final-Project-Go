@@ -50,20 +50,39 @@ void Game::dfs(int u, int v, vector<pii> &interconnected, int color)
     for (int i = 0; i < 4; i++)
     {
         int newu = u + d1[i], newv = v + d2[i];
-        if (min(newu, newv) < 0 || max(newu, newv) >= N || vis[newu][newv]) 
-            continue;
+        if (min(newu, newv) < 0 || max(newu, newv) >= N 
+            || vis[newu][newv] || board.a[newu][newv] != color) continue;
         dfs(newu, newv, interconnected, color);
     }
 }
 vector<pii> Game::getGroup(int i, int j)
 {
     vector<pii> interconnected;
+    memset(vis, 0, sizeof vis);
     dfs(i, j, interconnected, board.a[i][j]);
     return interconnected;
 }
 int Game::countLiberties(int i, int j)
 {
-    return 0;
+    vector<pii> group = getGroup(i, j);
+    memset(vis, 0, sizeof vis);
+    int Lib_count = -(int)(group.size());
+    for (pii &pos : group)
+    {
+        int x = pos.fi, y = pos.se;
+        Lib_count += !vis[x][y];
+        vis[x][y] = 1;
+        for (int i = 0; i < 4; i++)
+        {
+            int newx = x + d1[i], newy = y + d2[i];
+            if (min(newx, newy) < 0 || max(newx, newy) >= N
+                || board.a[newx][newy] != board.a[x][y] || vis[newx][newy])
+                continue;
+            Lib_count++;
+            vis[newx][newy] = 1;
+        }
+    }
+    return Lib_count;
 }
 int Game::captureGroups(int i, int j)
 {

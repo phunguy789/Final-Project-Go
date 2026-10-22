@@ -39,4 +39,10 @@ class Game
 
     bool saveGame(const std::string& filename);
     bool loadGame(const std::string& filename);
+
+    private:
+    int d1[4] = {1, -1, 0, 0},
+        d2[4] = {0, 0, 1, -1};
+    bool vis[N][N];
+    void dfs(int u, int v, vector<pii> &interconnected, int color);
 };

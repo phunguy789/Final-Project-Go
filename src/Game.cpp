@@ -1,5 +1,8 @@
 #include "Game.h"
 using namespace std;
+#define pii pair<int, int> 
+#define fi first
+#define se second
 Game::Game()
 {
     reset();
@@ -21,10 +24,12 @@ bool Game::playMove(int i, int j)
 }
 void Game::passTurn()
 {
-
+    passCount++;
+    turn = 3 - turn;
 }
 bool Game::checkGameOver()
 {
+    if (passCount >= 2) return 1;
     return 0;
 }
 int Game::calculateScore()
@@ -33,9 +38,12 @@ int Game::calculateScore()
 }
 bool Game::isValidMove(int i, int j)
 {
-    return 0;
+    if (min(i, j) < 0 || max(i, j) > N) return 0;
+    if (board.a[i][j] != 0) return 0;
+    // need add more conditions to check valid move
+    return 1;
 }
-vector<pair<int, int>> Game::getGroup(int i, int j)
+vector<pii> Game::getGroup(int i, int j)
 {
     return {};
 }

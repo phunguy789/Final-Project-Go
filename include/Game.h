@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 using namespace std;
+#define pii pair<int, int> 
 class Game
 {
     public:
@@ -28,7 +29,7 @@ class Game
     int calculateScore();
 
     bool isValidMove(int i, int j);
-    std::vector<std::pair<int, int>> getGroup(int i, int j);
+    vector<pii> getGroup(int i, int j);
     int countLiberties(int i, int j);
     int captureGroups(int i, int j);
     bool checkKo(int i, int j);

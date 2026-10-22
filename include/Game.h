@@ -36,6 +36,7 @@ class Game
 
     void undo();
     void redo();
+    bool isSameBoard(Board &This, Board &That);
 
     bool saveGame(const std::string& filename);
     bool loadGame(const std::string& filename);

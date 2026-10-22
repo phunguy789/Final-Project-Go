@@ -1,6 +1,6 @@
 #include "Game.h"
 using namespace std;
-#define pii pair<int, int> 
+using pii = pair<int, int>;
 #define fi first
 #define se second
 Game::Game()

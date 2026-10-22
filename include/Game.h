@@ -6,7 +6,7 @@
 #include <vector>
 #include <utility>
 using namespace std;
-#define pii pair<int, int> 
+using pii = pair<int, int>;
 class Game
 {
     public:

@@ -3,8 +3,8 @@
 #include <cstring>
 #include <vector>
 #include <cstdlib>
-#define pii pair<int, int>
 using namespace std;
+using pii = pair<int, int>;
 AI::AI()
 {
 }

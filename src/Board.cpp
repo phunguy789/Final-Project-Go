@@ -5,8 +5,8 @@
 #define se second
 using namespace std;
 
-const int dr[4] = {-1, 1, 0, 0};
-const int dc[4] = {0, 0, -1, 1};   
+const int dx[4] = {-1, 1, 0, 0};
+const int dy[4] = {0, 0, -1, 1};   
 
 Board::Board(int n){reset(n);}
 
@@ -26,7 +26,7 @@ Group Board::group(int r, int c) const{
     for (int i = 0; i < g.stones.size(); i++){
         int x = g.stones[i].fi, y = g.stones[i].se; 
         for (int j = 0; j < 4; j++){
-            int dr = x + dr[j], dc = y + dc[j]; 
+            int dr = x + dx[j], dc = y + dy[j]; 
             if (!inside(dr, dc)) continue; 
             if (a[dr][dc] == EMPTY){
                 // add each empty liberty only once

@@ -21,7 +21,7 @@ struct Score{
     int territory[3]{};
     int removed[3]{}; 
     int owner[N][N]{};
-    double black = 0, white = 0
+    double black = 0, white = 0;
 };
 
 class Board{
@@ -29,8 +29,8 @@ public:
     int a[N][N]{};
     int size;
     explicit Board(int n = 19); // constructor; default 19 x 19
-    Board();
-    void reset();
+    // Board();
+    void reset(int n);
     bool inside(int r, int c) const;
     Group group(int r, int c) const;
     string key() const; 

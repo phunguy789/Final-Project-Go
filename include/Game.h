@@ -38,8 +38,9 @@ class Game
     void redo();
     bool isSameBoard(Board &This, Board &That);
 
-    bool saveGame(const std::string& filename);
-    bool loadGame(const std::string& filename);
+    void printBoard(Board &board, string &filename);
+    bool saveGame(string &filename);
+    bool loadGame(string &filename);
 
     private:
     int d1[4] = {1, -1, 0, 0},

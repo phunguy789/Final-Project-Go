@@ -1,3 +1,5 @@
+#include <fstream>
+#include <iostream>
 #include "Game.h"
 using namespace std;
 using pii = pair<int, int>;
@@ -136,11 +138,34 @@ void Game::redo()
     passCount = redoStack.top().se;
     undoStack.push(state);
 }
-bool Game::saveGame(const string& filename)
+void Game::printBoard(Board &board, string &filename)
 {
+    ofstream file(filename);
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++) 
+        file << board.a[i][j] << " ";
+        cout << "\n";
+    }
+    file.close();
+}
+bool Game::saveGame(string &filename)
+{
+    ofstream file(filename);
+    if (!file.is_open()) return 0;
+
+    printBoard(board, filename);
+
+    file << turn << "\n";
+    file << mode << "\n";
+    file << difficult << "\n";
+    file << gameOver << "\n";
+    file << passCount << "\n";
+
+    file.close();
     return 1;
 }
-bool Game::loadGame(const string& filename)
+bool Game::loadGame(string& filename)
 {
     return 1;
 }

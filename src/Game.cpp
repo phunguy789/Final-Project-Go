@@ -167,5 +167,18 @@ bool Game::saveGame(string &filename)
 }
 bool Game::loadGame(string& filename)
 {
+    ifstream file(filename);
+    if (!file.is_open()) return 0;
+
+    for (int i = 0; i < N; i++)
+    for (int j = 0; j < N; j++) file >> board.a[i][j];
+
+    file >> turn;
+    file >> mode;
+    file >> difficult;
+    file >> gameOver;
+    file >> passCount;
+
+    file.close();
     return 1;
 }

@@ -17,8 +17,8 @@ class Game
     int difficult;
     bool gameOver;
     int passCount;
-    stack<Board> undoStack;
-    stack<Board> redoStack;
+    stack<pair<Board, int>> undoStack;
+    stack<pair<Board, int>> redoStack;
 
     Game();
 

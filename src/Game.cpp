@@ -9,7 +9,7 @@ Game::Game()
 }
 void Game::reset()
 {
-    board.reset();       
+    board.reset(19);       
     turn = 2;            
     mode = 0;            
     difficult = 1;       
@@ -95,7 +95,7 @@ int Game::captureGroups(int i, int j)
         if (countLiberties(group) == 0)
         {
             cnt_capture += (int)group.size();
-            for (pii &p : group) board.a[p.first][p.second] = 0;
+            for (pii &p : group) board.a[p.fi][p.se] = 0;
         }
     }
     return cnt_capture;
@@ -109,9 +109,9 @@ bool Game::isSameBoard(Board &This, Board &That)
 }
 bool Game::checkKo(int i, int j)
 {
-    Board state_before = undoStack.top();
+    pair<Board, int> state_before = undoStack.top();
     undoStack.pop();
-    if (isSameBoard(undoStack.top(), board))
+    if (isSameBoard(undoStack.top().fi, board))
     {
         undoStack.push(state_before);
         return 0;
@@ -120,17 +120,27 @@ bool Game::checkKo(int i, int j)
 }
 void Game::undo()
 {
-
+    if (undoStack.empty()) return;
+    pair<Board, int> state = undoStack.top();
+    undoStack.pop();
+    board = undoStack.top().fi;
+    passCount = undoStack.top().se;
+    redoStack.push(state);
 }
 void Game::redo()
 {
-
+    if (redoStack.empty()) return;
+    pair<Board, int> state = redoStack.top();
+    redoStack.pop();
+    board = redoStack.top().fi;
+    passCount = redoStack.top().se;
+    undoStack.push(state);
 }
 bool Game::saveGame(const string& filename)
 {
-    return 0;
+    return 1;
 }
 bool Game::loadGame(const string& filename)
 {
-    return 0;
+    return 1;
 }

@@ -16,9 +16,16 @@ vector<pii> AI::getLegalMoves(Board &board, int turn)
     if (board.a[i][j] == 0) empty_pos.push_back({i, j});
     return empty_pos;
 }
-int AI::evaluate(Board &board, int turn)
+int AI::evaluate(Board &board, int aiturn)
 {
     int scores = 0;
+    int black = 0, white = 0;
+    for (int i = 0; i < N; i++)
+    for (int j = 0; j < N; j++)
+    if (board.a[i][j] == 1) black++;
+    else if (board.a[i][j] == 2) white++;
+    if (aiturn == 1) scores = black - white;
+    else scores = white - black;
     return scores;
 }
 int AI::minimax(Board &board, int depth, int turn, int aiturn)

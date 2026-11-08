@@ -1,8 +1,8 @@
 #include "AI.h"
 #include "Board.h"
-#include <cstring>
 #include <vector>
 #include <cstdlib>
+#include <climits>
 using namespace std;
 using pii = pair<int, int>;
 AI::AI()
@@ -30,7 +30,43 @@ int AI::evaluate(Board &board, int aiturn)
 }
 int AI::minimax(Board &board, int depth, int turn, int aiturn)
 {
-    return 0;
+    if (depth == 0) return evaluate(board, aiturn);
+    int bestscore = 0;
+    bool maximize = (aiturn == turn);
+    bool foundmove = 0;
+    if (maximize)
+    {
+        bestscore = INT_MIN;
+        for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
+        if (board.a[i][j] == 0)
+        {
+            foundmove = 1;
+            board.a[i][j] = turn;
+            int score = minimax(board, depth - 1, 3 - turn, aiturn);
+            board.a[i][j] = 0;
+            bestscore = max(bestscore, score);
+        }
+        if (!foundmove)
+        bestscore = evaluate(board, aiturn);
+    }
+    else 
+    {
+        bestscore = INT_MAX;
+        for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
+        if (board.a[i][j] == 0)
+        {
+            foundmove = 1;
+            board.a[i][j] = turn;
+            int score = minimax(board, depth - 1, 3 - turn, aiturn);
+            board.a[i][j] = 0;
+            bestscore = min(bestscore, score);
+        }
+        if (!foundmove)
+        bestscore = evaluate(board, aiturn);
+    }
+    return bestscore;
 }
 pii AI::makemove(Board &board, int turn, int difficult)
 {

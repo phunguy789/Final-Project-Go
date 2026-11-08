@@ -69,6 +69,25 @@ int AI::minimax(Board &board, int depth, int turn, int aiturn)
     }
     return bestscore;
 }
+pii AI::findBestMove(Board& board, int depth, int aiTurn)
+{
+    int bestscore = INT_MIN;
+    pair<int, int> bestmove = {-1, -1};
+    for (int i = 0; i < N; i++)
+    for (int j = 0; j < N; j++)
+    if (board.a[i][j] == 0)
+    {
+        board.a[i][j] = aiTurn;
+        int score = minimax(board, depth - 1, 3 - aiTurn, aiTurn);
+        board.a[i][j] = 0;
+        if (score > bestscore)
+        {
+            bestscore = score;
+            bestmove = {i, j};
+        }
+    }
+    return bestmove;
+}
 pii AI::makemove(Board &board, int turn, int difficult)
 {
     if (difficult == 1)
@@ -81,7 +100,9 @@ pii AI::makemove(Board &board, int turn, int difficult)
     }
     else if (difficult == 2)
     {
-        
+        pii move = findBestMove(board, 2, turn);
+        board.a[move.first][move.second] = turn;
+        return move;
     }
     return {0, 0};
 }

@@ -11,4 +11,5 @@ class AI
     vector<pair<int,int>> getLegalMoves(Board &board, int turn);
     int evaluate(Board &board, int aiTurn);
     int minimax(Board &board, int depth, int turn, int aiTurn);
+    pii findBestMove(Board& board, int depth, int aiTurn);
 };

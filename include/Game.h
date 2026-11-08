@@ -26,10 +26,10 @@ class Game
     bool checkGameOver();
     int calculateScore();
 
-    bool isValidMove(Board &board, int i, int j, int turn);
-    vector<pii> getGroup(int i, int j);
-    int countLiberties(vector<pii> &group);
-    int captureGroups(int i, int j);
+    bool completeMove(Board &board, int i, int j, int turn, bool rollback);
+    vector<pii> getGroup(Board &board, int i, int j);
+    int countLiberties(Board &board, vector<pii> &group);
+    int captureGroups(Board &board, int i, int j);
     bool checkKo(Board &board, int i, int j);
     bool isSuicide(Board &board, int i, int j);
 
@@ -45,5 +45,5 @@ class Game
     int d1[4] = {1, -1, 0, 0},
         d2[4] = {0, 0, 1, -1};
     bool vis[N][N];
-    void dfs(int u, int v, vector<pii> &interconnected, int color);
+    void dfs(Board &board, int u, int v, vector<pii> &interconnected, int color);
 };

@@ -9,7 +9,7 @@ class AI
     public:
     AI();
     pii makemove(Board &board, int turn, int difficult, Game &game);
-    vector<pii> getLegalMoves(Board &board);
+    vector<pii> getLegalMoves(Board &board, int turn, Game &game);
     int evaluate(Board &board, int aiTurn);
     int minimaxAB(Board &board, int depth, int turn, int aiTurn, int alpha, int beta, Game &game);
     pii findBestMove(Board& board, int depth, int aiTurn, Game &game);

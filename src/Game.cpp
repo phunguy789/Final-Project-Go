@@ -7,6 +7,7 @@ using namespace std;
 using pii = pair<int, int>;
 #define fi first
 #define se second
+int debug;
 Game::Game()
 {
     reset();
@@ -24,7 +25,11 @@ void Game::reset()
 }
 bool Game::playMove(Board &board, int i, int j, int turn)
 {
-    return 0;
+    board.a[i][j] = turn;
+    if (turn == 1 && i == 0 && j == 1) debug = 1;
+    captureGroups(board, i, j);
+    debug = 0;
+    return 1;
 }
 void Game::passTurn()
 {
@@ -55,29 +60,30 @@ bool Game::checkKo(Board &board, int i, int j)
 }
 bool Game::isSuicide(Board &board, int i, int j)
 {
-    vector<pii> group = getGroup(i, j);
-    if (countLiberties(group) == 0) return 1;
+    vector<pii> group = getGroup(board, i, j);
+    if (countLiberties(board, group) == 0) return 1;
     return 0;
 }
-bool Game::isValidMove(Board &board, int i, int j, int turn)
+bool Game::completeMove(Board &board, int i, int j, int turn, bool rollback)
 {
     if (min(i, j) < 0 || max(i, j) >= N) return 0;
     if (board.a[i][j] != 0) return 0;
-    board.a[i][j] = turn;
+    Board oldboard = board;
+    playMove(board, i, j, turn);
     if (checkKo(board, i, j)) 
     {
-        board.a[i][j] = 0;
+        board = oldboard;
         return 0;
     }
     if (isSuicide(board, i, j))
     {
-        board.a[i][j] = 0;
+        board = oldboard;
         return 0;
     }
-    board.a[i][j] = 0;
+    if (rollback) board = oldboard;
     return 1;
 }
-void Game::dfs(int u, int v, vector<pii> &interconnected, int color)
+void Game::dfs(Board &board, int u, int v, vector<pii> &interconnected, int color)
 {
     vis[u][v] = 1;
     interconnected.push_back({u, v});
@@ -86,17 +92,17 @@ void Game::dfs(int u, int v, vector<pii> &interconnected, int color)
         int newu = u + d1[i], newv = v + d2[i];
         if (min(newu, newv) < 0 || max(newu, newv) >= N 
             || vis[newu][newv] || board.a[newu][newv] != color) continue;
-        dfs(newu, newv, interconnected, color);
+        dfs(board, newu, newv, interconnected, color);
     }
 }
-vector<pii> Game::getGroup(int i, int j)
+vector<pii> Game::getGroup(Board &board, int i, int j)
 {
     vector<pii> interconnected;
     memset(vis, 0, sizeof vis);
-    dfs(i, j, interconnected, board.a[i][j]);
+    dfs(board, i, j, interconnected, board.a[i][j]);
     return interconnected;
 }
-int Game::countLiberties(vector<pii> &group)
+int Game::countLiberties(Board &board, vector<pii> &group)
 {
     memset(vis, 0, sizeof vis);
     int Lib_count = -(int)(group.size());
@@ -112,22 +118,25 @@ int Game::countLiberties(vector<pii> &group)
             if (board.a[newx][newy] > 0 && board.a[newx][newy] != board.a[x][y])
             continue;
             if (vis[newx][newy]) continue;
+            if (debug) 
+                cout << board.a[newx][newy] << "\n";
             Lib_count++;
             vis[newx][newy] = 1;
         }
     }
     return Lib_count;
 }
-int Game::captureGroups(int i, int j)
+int Game::captureGroups(Board &board, int i, int j)
 {
     int cnt_capture = 0;
-    for (int i = 0; i < 4; i++)
+    for (int p = 0; p < 4; p++)
     {
-        int x = i + d1[i], y = j + d2[i];
+        int x = i + d1[p], y = j + d2[p];
         if (min(x, y) < 0 || max(x, y) >= N || board.a[x][y] == board.a[i][j])
             continue;
-        vector<pii> group = getGroup(x, y);
-        if (countLiberties(group) == 0)
+        if (board.a[x][y] == 0) continue;
+        vector<pii> group = getGroup(board, x, y);
+        if (countLiberties(board, group) == 0)
         {
             cnt_capture += (int)group.size();
             for (pii &p : group) board.a[p.fi][p.se] = 0;

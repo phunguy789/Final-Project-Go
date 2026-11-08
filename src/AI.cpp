@@ -12,12 +12,13 @@ using pii = pair<int, int>;
 AI::AI()
 {
 }
-vector<pii> AI::getLegalMoves(Board &board)
+vector<pii> AI::getLegalMoves(Board &board, int turn, Game &game)
 {
     vector<pii> empty_pos;
     for (int i = 0; i < N; i++)
     for (int j = 0; j < N; j++)
-    if (board.a[i][j] == 0) empty_pos.push_back({i, j});
+    if (game.completeMove(board, i, j, turn, 1)) 
+        empty_pos.push_back({i, j});
     return empty_pos;
 }
 int AI::evaluate(Board &board, int aiturn)
@@ -46,9 +47,11 @@ int AI::minimaxAB(Board &board, int depth, int turn, int aiturn, int alpha, int 
         int i = move.fi, j = move.se;
         if (board.a[i][j] == 0)
         {
-            board.a[i][j] = turn;
+            Board oldboard = board;
+            if (!game.completeMove(board, i, j, turn, 0)) 
+            { board = oldboard; continue; }
             int score = minimaxAB(board, depth - 1, 3 - turn, aiturn, alpha, beta, game);
-            board.a[i][j] = 0;
+            board = oldboard;
             // rollback
             if (maximize)
             {
@@ -74,9 +77,11 @@ pii AI::findBestMove(Board& board, int depth, int aiTurn, Game &game)
     for (pii move : candidateMoves)
     {
         int i = move.fi, j = move.se;
-        board.a[i][j] = aiTurn;
+        Board oldboard = board;
+        if (!game.completeMove(board, i, j, aiTurn, 0)) 
+        { board = oldboard; continue; }
         int score = minimaxAB(board, depth - 1, 3 - aiTurn, aiTurn, alpha, beta, game);
-        board.a[i][j] = 0;
+        board = oldboard;
         // rollback
         if (score > bestscore)
         {
@@ -91,23 +96,25 @@ pii AI::makemove(Board &board, int turn, int difficult, Game &game)
 {
     if (difficult == 1)
     {
-        vector<pii> empty_pos = getLegalMoves(board);
+        vector<pii> empty_pos = getLegalMoves(board, turn, game);
         int pos = rand() % (empty_pos.size());
         int x, y;
-        board.a[x = empty_pos[pos].fi][y = empty_pos[pos].se] = turn;
+        x = empty_pos[pos].fi; 
+        y = empty_pos[pos].se;
+        game.playMove(board, x, y, turn);
         return {x, y};
     }
     else if (difficult == 2)
     {
         pii move = findBestMove(board, 1, turn, game);
-        board.a[move.fi][move.se] = turn;
+        game.playMove(board, move.fi, move.se, turn);
         return move;
     }
     return {0, 0};
 }
 vector<pii> AI::getCandidateMoves(Board& board, int turn, Game &game)
 {
-    vector<pii> legal = getLegalMoves(board);
+    vector<pii> legal = getLegalMoves(board, turn, game);
     vector<pii> candidates;
     bool near[N][N] = {};
     bool hasStone = false;
@@ -115,14 +122,13 @@ vector<pii> AI::getCandidateMoves(Board& board, int turn, Game &game)
     for (int j = 0; j < N; j++)
     {
         if (board.a[i][j] == 0) continue;
-        cout << i << " " << j << "\n";
         hasStone = true;
         for (int dx = -1; dx <= 1; dx++)
         for (int dy = -1; dy <= 1; dy++)
         {
             int x = i + dx;
             int y = j + dy;
-            if (game.isValidMove(board, x, y, turn)) 
+            if (game.completeMove(board, x, y, turn, 1)) 
             // if (min(x, y) < 0 || max(x, y) >= N) continue;
             near[x][y] = true;
         }

@@ -1,5 +1,6 @@
 #pragma once
 #include "Board.h"
+#include "Game.h"
 #include <vector>
 #include <utility>
 using namespace std;
@@ -7,10 +8,10 @@ class AI
 {
     public:
     AI();
-    pii makemove(Board &board, int turn, int difficult);
+    pii makemove(Board &board, int turn, int difficult, Game &game);
     vector<pii> getLegalMoves(Board &board);
     int evaluate(Board &board, int aiTurn);
-    int minimax(Board &board, int depth, int turn, int aiTurn);
-    pii findBestMove(Board& board, int depth, int aiTurn);
-    vector<pii> getCandidateMoves(Board& board, int turn);
+    int minimaxAB(Board &board, int depth, int turn, int aiTurn, int alpha, int beta, Game &game);
+    pii findBestMove(Board& board, int depth, int aiTurn, Game &game);
+    vector<pii> getCandidateMoves(Board& board, int turn, Game &game);
 };

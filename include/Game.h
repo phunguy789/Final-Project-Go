@@ -1,6 +1,5 @@
 #pragma once
 #include "Board.h"
-#include "AI.h"
 #include <stack>
 #include <string>
 #include <vector>
@@ -11,7 +10,6 @@ class Game
 {
     public:
     Board board;
-    AI ai;
     int turn;
     int mode;
     int difficult;
@@ -23,17 +21,17 @@ class Game
     Game();
 
     void reset();
-    bool playMove(int i, int j);
+    bool playMove(Board &board, int i, int j, int turn);
     void passTurn();
     bool checkGameOver();
     int calculateScore();
 
-    bool isValidMove(int i, int j, int turn);
+    bool isValidMove(Board &board, int i, int j, int turn);
     vector<pii> getGroup(int i, int j);
     int countLiberties(vector<pii> &group);
     int captureGroups(int i, int j);
-    bool checkKo(int i, int j);
-    bool isSuicide(int i, int j);
+    bool checkKo(Board &board, int i, int j);
+    bool isSuicide(Board &board, int i, int j);
 
     void undo();
     void redo();

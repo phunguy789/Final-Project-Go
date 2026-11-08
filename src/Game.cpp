@@ -22,7 +22,7 @@ void Game::reset()
     while (!undoStack.empty()) undoStack.pop();
     while (!redoStack.empty()) redoStack.pop();
 }
-bool Game::playMove(int i, int j)
+bool Game::playMove(Board &board, int i, int j, int turn)
 {
     return 0;
 }
@@ -40,28 +40,36 @@ int Game::calculateScore()
 {
     return 0;
 }
-bool Game::isSuicide(int i, int j)
+bool Game::checkKo(Board &board, int i, int j)
 {
-    for (int p = 0; p < 4; p++)
+    if ((int)undoStack.size() < 2) return 0; 
+    pair<Board, int> state_before = undoStack.top();
+    undoStack.pop();
+    if (isSameBoard(undoStack.top().fi, board))
     {
-        int x = i + d1[p];
-        int y = j + d2[p];
-        if (min(x, y) < 0 || max(x, y) >= N) continue;
-        if (board.a[i][j] == board.a[x][y] || board.a[x][y] == 0) continue;
-        vector<pii> group = getGroup(x, y);
-        if (countLiberties(group) == 0) return 0;        
+        undoStack.push(state_before);
+        return 0;
     }
+    undoStack.push(state_before);
+    return 1;
+}
+bool Game::isSuicide(Board &board, int i, int j)
+{
     vector<pii> group = getGroup(i, j);
     if (countLiberties(group) == 0) return 1;
     return 0;
 }
-bool Game::isValidMove(int i, int j, int turn)
+bool Game::isValidMove(Board &board, int i, int j, int turn)
 {
     if (min(i, j) < 0 || max(i, j) >= N) return 0;
     if (board.a[i][j] != 0) return 0;
-    if (checkKo(i, j)) return 0;
     board.a[i][j] = turn;
-    if (isSuicide(i, j))
+    if (checkKo(board, i, j)) 
+    {
+        board.a[i][j] = 0;
+        return 0;
+    }
+    if (isSuicide(board, i, j))
     {
         board.a[i][j] = 0;
         return 0;
@@ -132,18 +140,6 @@ bool Game::isSameBoard(Board &This, Board &That)
     for (int i = 0; i < N; i++)
     for (int j = 0; j < N; j++)
         if (This.a[i][j] != That.a[i][j]) return 0;
-    return 1;
-}
-bool Game::checkKo(int i, int j)
-{
-    pair<Board, int> state_before = undoStack.top();
-    undoStack.pop();
-    if (isSameBoard(undoStack.top().fi, board))
-    {
-        undoStack.push(state_before);
-        return 0;
-    }
-    undoStack.push(state_before);
     return 1;
 }
 void Game::undo()

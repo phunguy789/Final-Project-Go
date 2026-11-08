@@ -1,6 +1,8 @@
 #include <fstream>
 #include <iostream>
+#include <cstring>
 #include "Game.h"
+#include "Board.h"
 using namespace std;
 using pii = pair<int, int>;
 #define fi first
@@ -38,11 +40,33 @@ int Game::calculateScore()
 {
     return 0;
 }
-bool Game::isValidMove(int i, int j)
+bool Game::isSuicide(int i, int j)
+{
+    for (int p = 0; p < 4; p++)
+    {
+        int x = i + d1[p];
+        int y = j + d2[p];
+        if (min(x, y) < 0 || max(x, y) >= N) continue;
+        if (board.a[i][j] == board.a[x][y] || board.a[x][y] == 0) continue;
+        vector<pii> group = getGroup(x, y);
+        if (countLiberties(group) == 0) return 0;        
+    }
+    vector<pii> group = getGroup(i, j);
+    if (countLiberties(group) == 0) return 1;
+    return 0;
+}
+bool Game::isValidMove(int i, int j, int turn)
 {
     if (min(i, j) < 0 || max(i, j) >= N) return 0;
     if (board.a[i][j] != 0) return 0;
-    // need add more conditions to check valid move
+    if (checkKo(i, j)) return 0;
+    board.a[i][j] = turn;
+    if (isSuicide(i, j))
+    {
+        board.a[i][j] = 0;
+        return 0;
+    }
+    board.a[i][j] = 0;
     return 1;
 }
 void Game::dfs(int u, int v, vector<pii> &interconnected, int color)
@@ -76,9 +100,10 @@ int Game::countLiberties(vector<pii> &group)
         for (int i = 0; i < 4; i++)
         {
             int newx = x + d1[i], newy = y + d2[i];
-            if (min(newx, newy) < 0 || max(newx, newy) >= N
-                || board.a[newx][newy] != board.a[x][y] || vis[newx][newy])
-                continue;
+            if (min(newx, newy) < 0 || max(newx, newy) >= N) continue;
+            if (board.a[newx][newy] > 0 && board.a[newx][newy] != board.a[x][y])
+            continue;
+            if (vis[newx][newy]) continue;
             Lib_count++;
             vis[newx][newy] = 1;
         }
@@ -118,6 +143,7 @@ bool Game::checkKo(int i, int j)
         undoStack.push(state_before);
         return 0;
     }
+    undoStack.push(state_before);
     return 1;
 }
 void Game::undo()

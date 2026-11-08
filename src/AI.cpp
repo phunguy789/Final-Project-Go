@@ -1,5 +1,6 @@
 #include "AI.h"
 #include "Board.h"
+#include "Game.h"
 #include <vector>
 #include <cstdlib>
 #include <climits>

@@ -26,9 +26,7 @@ void Game::reset()
 bool Game::playMove(Board &board, int i, int j, int turn)
 {
     board.a[i][j] = turn;
-    if (turn == 1 && i == 0 && j == 1) debug = 1;
     captureGroups(board, i, j);
-    debug = 0;
     return 1;
 }
 void Game::passTurn()

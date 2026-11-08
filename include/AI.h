@@ -7,9 +7,10 @@ class AI
 {
     public:
     AI();
-    pair<int,int> makemove(Board &board, int turn, int difficult);
-    vector<pair<int,int>> getLegalMoves(Board &board, int turn);
+    pii makemove(Board &board, int turn, int difficult);
+    vector<pii> getLegalMoves(Board &board);
     int evaluate(Board &board, int aiTurn);
     int minimax(Board &board, int depth, int turn, int aiTurn);
     pii findBestMove(Board& board, int depth, int aiTurn);
+    vector<pii> getCandidateMoves(Board& board, int turn);
 };

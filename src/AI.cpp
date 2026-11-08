@@ -9,7 +9,7 @@ using pii = pair<int, int>;
 AI::AI()
 {
 }
-vector<pii> AI::getLegalMoves(Board &board, int turn)
+vector<pii> AI::getLegalMoves(Board &board)
 {
     vector<pii> empty_pos;
     for (int i = 0; i < N; i++)
@@ -92,7 +92,7 @@ pii AI::makemove(Board &board, int turn, int difficult)
 {
     if (difficult == 1)
     {
-        vector<pii> empty_pos = getLegalMoves(board, turn);
+        vector<pii> empty_pos = getLegalMoves(board);
         int pos = rand() % (empty_pos.size());
         int x, y;
         board.a[x = empty_pos[pos].first][y = empty_pos[pos].second] = turn;
@@ -105,4 +105,39 @@ pii AI::makemove(Board &board, int turn, int difficult)
         return move;
     }
     return {0, 0};
+}
+vector<pii> AI::getCandidateMoves(Board& board, int turn)
+{
+    vector<pii> legal = getLegalMoves(board);
+    vector<pii> candidates;
+    bool near[N][N] = {};
+    bool hasStone = false;
+    for (int i = 0; i < N; i++)
+    for (int j = 0; j < N; j++)
+    {
+        if (board.a[i][j] == 0) continue;
+        hasStone = true;
+        for (int dx = -1; dx <= 1; dx++)
+        for (int dy = -1; dy <= 1; dy++)
+        {
+            int x = i + dx;
+            int y = j + dy;
+            if (x < 0 || x >= N || y < 0 || y >= N) continue;
+            near[x][y] = true;
+        }
+    }
+    if (!hasStone)
+    {
+        for (pii pos : legal)
+        if (pos.first == N / 2 && pos.second == N / 2) return {pos};
+        return legal;
+    }
+    for (pii pos : legal)
+    {
+        int x = pos.first;
+        int y = pos.second;
+        if (near[x][y]) candidates.push_back(pos);
+    }
+    if (candidates.empty()) return legal;
+    return candidates;
 }

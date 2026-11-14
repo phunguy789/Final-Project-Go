@@ -7,7 +7,7 @@ using namespace std;
 UI::UI()
 {
 }
-void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)
+void UI::drawSetting(sf::RenderWindow &w, sf::Font &font)
 {
 
 }
@@ -59,16 +59,53 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
         }
     }
 }
-void UI::drawDifficultyMenu(sf::RenderWindow &w, sf::Font &font)
+void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)
 {
     sf::RectangleShape background(sf::Vector2f(800.f, 800.f));
     background.setPosition(sf::Vector2f(0.f, 0.f));
     background.setFillColor(sf::Color(220, 179, 92));
    
     sf::Text title(font, "GO GAME", 52);
-    title.setPosition(sf::Vector2f(250.f, 100.f));
+    title.setPosition(sf::Vector2f(275.f, 100.f));
     title.setFillColor(sf::Color(45, 30, 15));
+
+    sf::RectangleShape button1(sf::Vector2f(320.f, 75.f));
+    button1.setPosition(sf::Vector2f(240.f, 300.f));
+    button1.setFillColor(sf::Color(245, 222, 179));
+    button1.setOutlineThickness(3.f);
+    button1.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text text1(font, "PLAYER VS PLAYER", 25);
+    text1.setPosition(sf::Vector2f(280.f, 320.f));
+    text1.setFillColor(sf::Color(40, 30, 20));
+
+    sf::RectangleShape button2(sf::Vector2f(320.f, 75.f));
+    button2.setPosition(sf::Vector2f(240.f, 410.f));
+    button2.setFillColor(sf::Color(245, 222, 179));
+    button2.setOutlineThickness(3.f);
+    button2.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text text2(font, "PLAYER VS BOT", 25);
+    text2.setPosition(sf::Vector2f(295.f, 430.f));
+    text2.setFillColor(sf::Color(40, 30, 20));
+
+    sf::RectangleShape button3(sf::Vector2f(320.f, 75.f));
+    button3.setPosition(sf::Vector2f(240.f, 520.f));
+    button3.setFillColor(sf::Color(245, 222, 179));
+    button3.setOutlineThickness(3.f);
+    button3.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text text3(font, "SETTING", 25);
+    text3.setPosition(sf::Vector2f(340.f, 540.f));
+    text3.setFillColor(sf::Color(40, 30, 20));
 
     w.draw(background);
     w.draw(title);
+    w.draw(button1); w.draw(text1);
+    w.draw(button2); w.draw(text2);
+    w.draw(button3); w.draw(text3);
+}
+void UI::drawDifficultyMenu(sf::RenderWindow &w, sf::Font &font)
+{
+
 }

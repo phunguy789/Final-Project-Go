@@ -22,6 +22,31 @@ vector<pii> AI::getLegalMoves(Board &board, int turn, Game &game)
         empty_pos.push_back({i, j});
     return empty_pos;
 }
+int AI::connectivityScore(Board& board, int i, int j, int turn, Game& game)
+{
+    vector<vector<pii>> groups;
+    for (int k = 0; k < 4; k++)
+    {
+        int x = i + game.d1[k];
+        int y = j + game.d2[k];
+        if (min(x, y) < 0 || max(x, y) >= N) continue;
+        if (board.a[x][y] != turn) continue;
+        vector<pii> group = game.getGroup(board, x, y);
+        bool found = false;
+        for (auto &g : groups)
+        {
+            if (g == group)
+            {
+                found = true;
+                break;
+            }
+        }
+        if (!found) groups.push_back(group);
+    }
+    if (groups.size() >= 2) return 10;
+    if (groups.size() == 1) return 2;
+    return 0;
+}
 int AI::evaluate(Board &board, int aiturn, Game &game)
 {
     int scores = 0;
@@ -31,8 +56,8 @@ int AI::evaluate(Board &board, int aiturn, Game &game)
     for (int j = 0; j < N; j++)
     if (board.a[i][j] == 1) black++;
     else if (board.a[i][j] == 2) white++;
-    if (aiturn == 1) scores += 2 * (black - white);
-    else scores += 2 * (white - black);
+    if (aiturn == 1) scores += 10 * (black - white);
+    else scores += 10 * (white - black);
 
     black = 0; white = 0;
     int capturedBlack = 0, capturedWhite = 0;
@@ -52,14 +77,14 @@ int AI::evaluate(Board &board, int aiturn, Game &game)
         {
             if (game.completeMove(board, game.tempPos.fi, game.tempPos.se, 3 - board.a[i][j], 1))
             {
-                if (aiturn == 3 - board.a[i][j]) scores += 20;
-                else scores -= 20;
+                if (aiturn == 3 - board.a[i][j]) scores += 15;
+                else scores -= 15;
             }
         }
     }
     if (aiturn == 1) 
-    scores += 3 * (black - white) + safe[1] - safe[2];
-    else scores += 3 * (white - black) + safe[2] - safe[1];
+    scores += 2 * (black - white) + 3 * (safe[1] - safe[2]);
+    else scores += 2 * (white - black) + 3 * (safe[2] - safe[1]);
 
     int territoryBlack = 0;
     int territoryWhite = 0;
@@ -120,6 +145,7 @@ int AI::minimaxAB(Board &board, int depth, int turn, int aiturn, int alpha, int 
             { board = oldboard; continue; }
             game.undoStack.push({board, game.passCount});
             int score = minimaxAB(board, depth - 1, 3 - turn, aiturn, alpha, beta, game);
+            score += connectivityScore(board, i,j, turn, game);
             board = oldboard;
             game.undoStack.pop();
             // rollback
@@ -152,6 +178,7 @@ pii AI::findBestMove(Board& board, int depth, int aiTurn, Game &game)
         { board = oldboard; continue; }
         game.undoStack.push({board, game.passCount});
         int score = minimaxAB(board, depth - 1, 3 - aiTurn, aiTurn, alpha, beta, game);
+        score += connectivityScore(board, i, j, aiTurn, game);
         board = oldboard;
         game.undoStack.pop();
         // rollback
@@ -174,15 +201,20 @@ pii AI::makemove(Board &board, int turn, int difficult, Game &game)
         x = empty_pos[pos].fi; 
         y = empty_pos[pos].se;
         game.playMove(board, x, y, turn);
-        game.undoStack.push({game.board, game.passCount});
         return {x, y};
     }
     else if (difficult == 2)
     {
+        int depth = 1;
+        pii move = findBestMove(board, depth, turn, game);
+        game.playMove(board, move.fi, move.se, turn);
+        return move;
+    }
+    else if (difficult == 3)
+    {
         int depth = 3;
         pii move = findBestMove(board, depth, turn, game);
         game.playMove(board, move.fi, move.se, turn);
-        game.undoStack.push({game.board, game.passCount});
         return move;
     }
     return {0, 0};

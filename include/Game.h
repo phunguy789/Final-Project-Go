@@ -16,7 +16,7 @@ class Game
     bool gameOver;
     int passCount;
     bool par_vis[N][N];
-    pii tempPos;
+    pii tempPos, highlight;
     int calScore[5] = {0, -15, -5, 2, 3};
     stack<pair<Board, int>> undoStack;
     stack<pair<Board, int>> redoStack;

@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <climits>
 #include <iostream>
+#include <queue>
 using namespace std;
 using pii = pair<int, int>;
 #define fi first 
@@ -21,25 +22,92 @@ vector<pii> AI::getLegalMoves(Board &board, int turn, Game &game)
         empty_pos.push_back({i, j});
     return empty_pos;
 }
-int AI::evaluate(Board &board, int aiturn)
+int AI::evaluate(Board &board, int aiturn, Game &game)
 {
     int scores = 0;
+
     int black = 0, white = 0;
     for (int i = 0; i < N; i++)
     for (int j = 0; j < N; j++)
     if (board.a[i][j] == 1) black++;
     else if (board.a[i][j] == 2) white++;
-    if (aiturn == 1) scores = black - white;
-    else scores = white - black;
+    if (aiturn == 1) scores += 2 * (black - white);
+    else scores += 2 * (white - black);
+
+    black = 0; white = 0;
+    int capturedBlack = 0, capturedWhite = 0;
+    int safe[3] = {};
+    memset(game.par_vis, 0, sizeof game.par_vis);
+    for (int i = 0; i < N; i++)
+    for (int j = 0; j < N; j++)
+    if (game.par_vis[i][j] == 0 && board.a[i][j] != 0)
+    {
+        vector<pii> group = game.getGroup(board, i, j);
+        int tmp = game.countLiberties(board, group);
+        if (board.a[i][j] == 1) black += tmp;
+        else white += tmp;
+        if (tmp > 4) tmp = 4;
+        safe[board.a[i][j]] += game.calScore[tmp];
+        if (tmp == 1)
+        {
+            if (game.completeMove(board, game.tempPos.fi, game.tempPos.se, 3 - board.a[i][j], 1))
+            {
+                if (aiturn == 3 - board.a[i][j]) scores += 20;
+                else scores -= 20;
+            }
+        }
+    }
+    if (aiturn == 1) 
+    scores += 3 * (black - white) + safe[1] - safe[2];
+    else scores += 3 * (white - black) + safe[2] - safe[1];
+
+    int territoryBlack = 0;
+    int territoryWhite = 0;
+    bool territoryVis[N][N] = {};
+    for (int i = 0; i < N; i++)
+    for (int j = 0; j < N; j++)
+    {
+        if (board.a[i][j] != 0 || territoryVis[i][j]) continue;
+        queue<pii> q;
+        q.push({i, j});
+        territoryVis[i][j] = true;
+        int cnt = 0;
+        bool borderBlack = false;
+        bool borderWhite = false;
+        while (!q.empty())
+        {
+            pii u = q.front();
+            q.pop();
+            cnt++;
+            for (int k = 0; k < 4; k++)
+            {
+                int x = u.first + game.d1[k];
+                int y = u.second + game.d2[k];
+                if (min(x, y) < 0 || max(x, y) >= N) continue;
+                if (board.a[x][y] == 1) borderBlack = true;
+                else if (board.a[x][y] == 2) borderWhite = true;
+                else if (!territoryVis[x][y])
+                {
+                    territoryVis[x][y] = true;
+                    q.push({x, y});
+                }
+            }
+        }
+        if (borderBlack && !borderWhite) territoryBlack += cnt;
+        else if (borderWhite && !borderBlack) territoryWhite += cnt;
+    }
+    if (aiturn == 1) scores += 2 * (territoryBlack - territoryWhite);
+    else scores += 2 * (territoryWhite - territoryBlack);
+
     return scores;
 }
 int AI::minimaxAB(Board &board, int depth, int turn, int aiturn, int alpha, int beta, Game &game)
 {
-    if (depth == 0) return evaluate(board, aiturn);
+    if (depth == 0) return evaluate(board, aiturn, game);
     int bestscore = 0;
     bool maximize = (aiturn == turn);
     vector<pii> moves = getCandidateMoves(board, turn, game);
-    if (moves.empty()) return evaluate(board, aiturn);
+    if (moves.empty()) return evaluate(board, aiturn, game);
     if (maximize) bestscore = INT_MIN;
     else bestscore = INT_MAX;
     for (pii move : moves)
@@ -50,8 +118,10 @@ int AI::minimaxAB(Board &board, int depth, int turn, int aiturn, int alpha, int 
             Board oldboard = board;
             if (!game.completeMove(board, i, j, turn, 0)) 
             { board = oldboard; continue; }
+            game.undoStack.push({board, game.passCount});
             int score = minimaxAB(board, depth - 1, 3 - turn, aiturn, alpha, beta, game);
             board = oldboard;
+            game.undoStack.pop();
             // rollback
             if (maximize)
             {
@@ -80,8 +150,10 @@ pii AI::findBestMove(Board& board, int depth, int aiTurn, Game &game)
         Board oldboard = board;
         if (!game.completeMove(board, i, j, aiTurn, 0)) 
         { board = oldboard; continue; }
+        game.undoStack.push({board, game.passCount});
         int score = minimaxAB(board, depth - 1, 3 - aiTurn, aiTurn, alpha, beta, game);
         board = oldboard;
+        game.undoStack.pop();
         // rollback
         if (score > bestscore)
         {
@@ -102,12 +174,15 @@ pii AI::makemove(Board &board, int turn, int difficult, Game &game)
         x = empty_pos[pos].fi; 
         y = empty_pos[pos].se;
         game.playMove(board, x, y, turn);
+        game.undoStack.push({game.board, game.passCount});
         return {x, y};
     }
     else if (difficult == 2)
     {
-        pii move = findBestMove(board, 1, turn, game);
+        int depth = 3;
+        pii move = findBestMove(board, depth, turn, game);
         game.playMove(board, move.fi, move.se, turn);
+        game.undoStack.push({game.board, game.passCount});
         return move;
     }
     return {0, 0};

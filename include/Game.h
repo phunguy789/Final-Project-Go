@@ -15,6 +15,9 @@ class Game
     int difficult;
     bool gameOver;
     int passCount;
+    bool par_vis[N][N];
+    pii tempPos;
+    int calScore[5] = {0, -15, -5, 2, 3};
     stack<pair<Board, int>> undoStack;
     stack<pair<Board, int>> redoStack;
 
@@ -41,9 +44,10 @@ class Game
     bool saveGame(string &filename);
     bool loadGame(string &filename);
 
-    private:
     int d1[4] = {1, -1, 0, 0},
         d2[4] = {0, 0, 1, -1};
+
+    private:
     bool vis[N][N];
     void dfs(Board &board, int u, int v, vector<pii> &interconnected, int color);
 };

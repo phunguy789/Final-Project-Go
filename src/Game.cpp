@@ -7,7 +7,7 @@ using namespace std;
 using pii = pair<int, int>;
 #define fi first
 #define se second
-int debug;
+// int debug
 Game::Game()
 {
     reset();
@@ -51,10 +51,10 @@ bool Game::checkKo(Board &board, int i, int j)
     if (isSameBoard(undoStack.top().fi, board))
     {
         undoStack.push(state_before);
-        return 0;
+        return 1;
     }
     undoStack.push(state_before);
-    return 1;
+    return 0;
 }
 bool Game::isSuicide(Board &board, int i, int j)
 {
@@ -83,7 +83,7 @@ bool Game::completeMove(Board &board, int i, int j, int turn, bool rollback)
 }
 void Game::dfs(Board &board, int u, int v, vector<pii> &interconnected, int color)
 {
-    vis[u][v] = 1;
+    vis[u][v] = par_vis[u][v] = 1;
     interconnected.push_back({u, v});
     for (int i = 0; i < 4; i++)
     {
@@ -116,9 +116,8 @@ int Game::countLiberties(Board &board, vector<pii> &group)
             if (board.a[newx][newy] > 0 && board.a[newx][newy] != board.a[x][y])
             continue;
             if (vis[newx][newy]) continue;
-            if (debug) 
-                cout << board.a[newx][newy] << "\n";
             Lib_count++;
+            if (board.a[newx][newy] == 0) tempPos = {newx, newy};
             vis[newx][newy] = 1;
         }
     }

@@ -2,6 +2,9 @@
 #include "Game.h"
 #include <cstring>
 #include <SFML/Graphics.hpp>
+#define fi first 
+#define se second 
+using pii = pair<int, int>;
 using namespace std;
 UI::UI()
 {
@@ -56,6 +59,17 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
             stone.setOutlineColor(sf::Color(60, 60, 60));
             w.draw(stone);
         }
+    }
+
+    if (game.highlight.fi != -1 && game.highlight.se != -1)
+    {
+        int i = game.highlight.fi;
+        int j = game.highlight.se;
+        sf::CircleShape mark(4.f);
+        mark.setOrigin(sf::Vector2f(4.f, 4.f));
+        mark.setPosition(sf::Vector2f(x0 + j * cell, y0 + i * cell));
+        mark.setFillColor(sf::Color::Red);
+        w.draw(mark);
     }
 }
 void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)

@@ -41,7 +41,7 @@ void UI::drawSetting(sf::RenderWindow &w, sf::Font &font, Game &game)
 void UI::drawBoardTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
     sf::Text title(font, "BOARD COLOR", 25);
-    title.setPosition({250.f, 180.f});
+    title.setPosition({300.f, 80.f});
     title.setFillColor(sf::Color(40, 30, 20));
     w.draw(title);
 
@@ -57,7 +57,7 @@ void UI::drawBoardTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
     for (int i = 0; i < 3; i++)
     {
         sf::RectangleShape button({130.f, 65.f});
-        button.setPosition({105.f + i * 200.f, 250.f});
+        button.setPosition({125.f + i * 200.f, 140.f});
         button.setFillColor(colors[i]);
         button.setOutlineThickness(4.f);
 
@@ -65,7 +65,8 @@ void UI::drawBoardTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
         else button.setOutlineColor(sf::Color(75, 45, 20));
 
         sf::Text text(font, names[i], 20);
-        text.setPosition({125.f + i * 200.f, 270.f});
+        float textWidth = text.getLocalBounds().size.x;
+        text.setPosition({125.f + i * 200.f + (130.f - textWidth) / 2.f, 160.f});
         text.setFillColor(i == 1 ? sf::Color::White : sf::Color(40, 30, 20));
 
         w.draw(button);

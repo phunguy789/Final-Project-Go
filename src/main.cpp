@@ -45,7 +45,7 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 game.undoStack.push({game.board, game.passCount});
 
                 this_thread::sleep_for(chrono::milliseconds(50));
-                game.highlight = ai.makemove(game.board, 2, 3, game);
+                game.highlight = ai.makemove(game.board, 2, game.difficult, game);
                 //                                    turn, dif
                 game.undoStack.push({game.board, game.passCount});
             }
@@ -88,6 +88,29 @@ void DifficultymenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Even
     w.clear(sf::Color(40, 40, 40));
     ui.drawDifficultyMenu(w, font);
     w.display();
+    if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
+    {
+        if (m->button == sf::Mouse::Button::Left)
+        {
+            sf::Vector2f pos = w.mapPixelToCoords(m->position);
+
+            if (sf::FloatRect({240.f, 290.f}, {320.f, 75.f}).contains(pos))
+            {
+                screen = 3;
+                game.difficult = 1;
+            }
+            else if (sf::FloatRect({240.f, 395.f}, {320.f, 75.f}).contains(pos))
+            {
+                screen = 3;
+                game.difficult = 2;
+            }
+            else if (sf::FloatRect({240.f, 500.f}, {320.f, 75.f}).contains(pos))
+            {
+                screen = 3;
+                game.difficult = 3;
+            }
+        }
+    }
 }
 void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {

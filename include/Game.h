@@ -11,7 +11,7 @@ class Game
     public:
     Board board;
     int turn;
-    int mode;
+    int mode; // 1 = pvp, 2 = pve
     int difficult;
     bool gameOver;
     int passCount;

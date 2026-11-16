@@ -212,7 +212,7 @@ pii AI::makemove(Board &board, int turn, int difficult, Game &game)
     }
     else if (difficult == 3)
     {
-        int depth = 3;
+        int depth = 2;
         pii move = findBestMove(board, depth, turn, game);
         game.playMove(board, move.fi, move.se, turn);
         return move;

@@ -1,3 +1,7 @@
 *.exe
 .build/
 build/
+.vscode/
+Group55-06/
+*.txt
+*.zip

@@ -7,6 +7,7 @@ class UI
     UI();
 
     void drawSetting(sf::RenderWindow &w, sf::Font &font, Game &game);
+    void drawBackbutton(sf::RenderWindow &w, sf::Font &font);
     void drawBoardTheme(sf::RenderWindow &w, sf::Font &font, Game &game);
     void drawStoneTheme(sf::RenderWindow &w, sf::Font &font, Game &game);
     void drawSoundSettings(sf::RenderWindow &w, sf::Font &font, Game &game);

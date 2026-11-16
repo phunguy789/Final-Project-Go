@@ -4,3 +4,7 @@ cmake --build build -j4
 -> compile
 set "PATH=C:\msys64\ucrt64\bin;%PATH%" 
 -> fix path
+git log --all --date=iso --pretty=format:"Commit: %H%nAuthor: %an <%ae>%nDate: %ad%nSubject: %s%n" > git-log.txt
+-> get commit log
+git shortlog -sne --all
+-> get total commits

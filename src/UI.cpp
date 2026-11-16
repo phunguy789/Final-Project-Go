@@ -9,22 +9,68 @@ using namespace std;
 UI::UI()
 {
 }
+void UI::drawBackbutton(sf::RenderWindow &w, sf::Font &font)
+{
+    sf::RectangleShape backButton({100.f, 45.f});
+    backButton.setPosition({30.f, 25.f});
+    backButton.setFillColor(sf::Color(245, 222, 179));
+    backButton.setOutlineThickness(2.f);
+    backButton.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text backText(font, "BACK", 20);
+    backText.setPosition({55.f, 33.f});
+    backText.setFillColor(sf::Color::Black);
+
+    w.draw(backButton);
+    w.draw(backText);
+}
 void UI::drawSetting(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
     sf::RectangleShape background(sf::Vector2f(800.f, 800.f));
     background.setPosition(sf::Vector2f(0.f, 0.f));
-    background.setFillColor(sf::Color(220, 179, 92));
+    background.setFillColor(sf::Color(243, 235, 221));
+    w.draw(background);
+
+    drawBackbutton(w, font);
 
     drawBoardTheme(w, font, game);
-    drawStoneTheme(w, font, game);
-    drawSoundSettings(w, font, game);
-    drawMusicSettings(w, font, game);
-
-    w.draw(background);
+    // drawStoneTheme(w, font, game);
+    // drawSoundSettings(w, font, game);
+    // drawMusicSettings(w, font, game);
 }
 void UI::drawBoardTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
+    sf::Text title(font, "BOARD COLOR", 25);
+    title.setPosition({250.f, 180.f});
+    title.setFillColor(sf::Color(40, 30, 20));
+    w.draw(title);
 
+    string names[3] = {"CLASSIC", "DARK", "LIGHT"};
+
+    sf::Color colors[3] =
+    {
+        sf::Color(220, 179, 92),
+        sf::Color(110, 75, 45),
+        sf::Color(240, 220, 170)
+    };
+
+    for (int i = 0; i < 3; i++)
+    {
+        sf::RectangleShape button({130.f, 65.f});
+        button.setPosition({105.f + i * 200.f, 250.f});
+        button.setFillColor(colors[i]);
+        button.setOutlineThickness(4.f);
+
+        if (game.boardTheme == i) button.setOutlineColor(sf::Color::Red);
+        else button.setOutlineColor(sf::Color(75, 45, 20));
+
+        sf::Text text(font, names[i], 20);
+        text.setPosition({125.f + i * 200.f, 270.f});
+        text.setFillColor(i == 1 ? sf::Color::White : sf::Color(40, 30, 20));
+
+        w.draw(button);
+        w.draw(text);
+    }
 }
 void UI::drawStoneTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
@@ -46,7 +92,9 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
 
     sf::RectangleShape bg(sf::Vector2f(590.f, 590.f));
     bg.setPosition(sf::Vector2f(20.f, 20.f));
-    bg.setFillColor(sf::Color(220, 179, 92));
+    if (game.boardTheme == 0) bg.setFillColor(sf::Color(220, 179, 92));
+    else if (game.boardTheme == 1) bg.setFillColor(sf::Color(110, 75, 45));
+    else if (game.boardTheme == 1) bg.setFillColor(sf::Color(240, 220, 170));
     w.draw(bg);
 
     for (int i = 0; i < N; i++)
@@ -75,10 +123,8 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
             stone.setOrigin(sf::Vector2f(cell * 0.42f, cell * 0.42f));
             stone.setPosition(sf::Vector2f(x0 + j * cell, y0 + i * cell));
 
-            if (game.board.a[i][j] == 1)
-                stone.setFillColor(sf::Color::Black);
-            else
-                stone.setFillColor(sf::Color::White);
+            if (game.board.a[i][j] == 1) stone.setFillColor(sf::Color::Black);
+            else stone.setFillColor(sf::Color::White);
 
             stone.setOutlineThickness(1.f);
             stone.setOutlineColor(sf::Color(60, 60, 60));
@@ -101,7 +147,7 @@ void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)
 {
     sf::RectangleShape background(sf::Vector2f(800.f, 800.f));
     background.setPosition(sf::Vector2f(0.f, 0.f));
-    background.setFillColor(sf::Color(220, 179, 92));
+    background.setFillColor(sf::Color(243, 235, 221));
    
     sf::Text title(font, "GO GAME", 52);
     title.setPosition(sf::Vector2f(275.f, 100.f));
@@ -147,7 +193,7 @@ void UI::drawDifficultyMenu(sf::RenderWindow &w, sf::Font &font)
 {
     sf::RectangleShape background(sf::Vector2f(800.f, 800.f));
     background.setPosition(sf::Vector2f(0.f, 0.f));
-    background.setFillColor(sf::Color(220, 179, 92));
+    background.setFillColor(sf::Color(243, 235, 221));
 
     sf::RectangleShape button1(sf::Vector2f(320.f, 75.f));
     button1.setPosition(sf::Vector2f(240.f, 290.f));
@@ -183,4 +229,5 @@ void UI::drawDifficultyMenu(sf::RenderWindow &w, sf::Font &font)
     w.draw(button1); w.draw(text1);
     w.draw(button2); w.draw(text2);
     w.draw(button3); w.draw(text3);
+    drawBackbutton(w, font);
 }

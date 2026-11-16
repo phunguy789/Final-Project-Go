@@ -109,6 +109,10 @@ void DifficultymenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Even
                 screen = 3;
                 game.difficult = 3;
             }
+            else if (sf::FloatRect({30.f, 25.f}, {100.f, 45.f}).contains(pos))
+            {
+                screen = 0;
+            }
         }
     }
 }
@@ -123,7 +127,14 @@ void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* even
         {
             sf::Vector2f pos = w.mapPixelToCoords(m->position);
 
-
+            if (1 == 0)
+            {
+                
+            }
+            else if (sf::FloatRect({30.f, 25.f}, {100.f, 45.f}).contains(pos))
+            {
+                screen = 0;
+            }
         }
     }
 }

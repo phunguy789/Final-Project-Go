@@ -114,11 +114,21 @@ void DifficultymenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Even
 }
 void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
+    w.clear(sf::Color(40, 40, 40));
+    ui.drawSetting(w, font, game);
+    w.display();
+    if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
+    {
+        if (m->button == sf::Mouse::Button::Left)
+        {
+            sf::Vector2f pos = w.mapPixelToCoords(m->position);
 
+
+        }
+    }
 }
 int main()
 {
-    game.highlight = {-1, -1};
     srand(time(0));
     game.reset();
     sf::Font font;

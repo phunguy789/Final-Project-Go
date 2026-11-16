@@ -9,7 +9,32 @@ using namespace std;
 UI::UI()
 {
 }
-void UI::drawSetting(sf::RenderWindow &w, sf::Font &font)
+void UI::drawSetting(sf::RenderWindow &w, sf::Font &font, Game &game)
+{
+    sf::RectangleShape background(sf::Vector2f(800.f, 800.f));
+    background.setPosition(sf::Vector2f(0.f, 0.f));
+    background.setFillColor(sf::Color(220, 179, 92));
+
+    drawBoardTheme(w, font, game);
+    drawStoneTheme(w, font, game);
+    drawSoundSettings(w, font, game);
+    drawMusicSettings(w, font, game);
+
+    w.draw(background);
+}
+void UI::drawBoardTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
+{
+
+}
+void UI::drawStoneTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
+{
+
+}
+void UI::drawSoundSettings(sf::RenderWindow &w, sf::Font &font, Game &game)
+{
+
+}
+void UI::drawMusicSettings(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
 
 }

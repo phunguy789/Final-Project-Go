@@ -9,17 +9,27 @@ using pii = pair<int, int>;
 class Game
 {
     public:
+    //setting
+    int boardTheme = 0;
+    // 0 = classic , 1 = dark , 2 = light
+    int stoneTheme = 0;
+    bool soundEnabled = 1;
+    bool musicEnabled = 1;
+    float soundVolume = 50.f;
+    float musicVolume = 50.f;
+    //
     Board board;
     int turn;
     int mode; // 1 = pvp, 2 = pve
     int difficult;
     bool gameOver;
     int passCount;
+    stack<pair<Board, int>> undoStack;
+    stack<pair<Board, int>> redoStack;
+
     bool par_vis[N][N];
     pii tempPos, highlight;
     int calScore[5] = {0, -15, -5, 2, 3};
-    stack<pair<Board, int>> undoStack;
-    stack<pair<Board, int>> redoStack;
 
     Game();
 

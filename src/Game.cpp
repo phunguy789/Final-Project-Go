@@ -15,11 +15,11 @@ Game::Game()
 void Game::reset()
 {
     board.reset(19);       
-    turn = 2;            
-    mode = 0;            
-    difficult = 1;       
+    turn = 2;         
+    boardTheme = 0;   
     gameOver = false;    
-    passCount = 0;       
+    passCount = 0; 
+    highlight = {-1, -1};      
     while (!undoStack.empty()) undoStack.pop();
     while (!redoStack.empty()) redoStack.pop();
 }

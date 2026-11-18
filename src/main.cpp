@@ -127,9 +127,25 @@ void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* even
         {
             sf::Vector2f pos = w.mapPixelToCoords(m->position);
 
-            if (1 == 0)
+            if (sf::FloatRect({125.f + 0 * 200.f, 130.f}, {130.f, 65.f}).contains(pos))
             {
-                
+                game.boardTheme = 0;
+            }
+            else if (sf::FloatRect({125.f + 1 * 200.f, 130.f}, {130.f, 65.f}).contains(pos))
+            {
+                game.boardTheme = 1;
+            }
+            else if (sf::FloatRect({125.f + 2 * 200.f, 130.f}, {130.f, 65.f}).contains(pos))
+            {
+                game.boardTheme = 2;
+            }
+            else if (sf::FloatRect({220.f + 0 * 200.f, 260.f}, {140.f, 90.f}).contains(pos))
+            {
+                game.stoneTheme = 0;
+            }
+            else if (sf::FloatRect({220.f + 1 * 200.f, 260.f}, {140.f, 90.f}).contains(pos))
+            {
+                game.stoneTheme = 1;
             }
             else if (sf::FloatRect({30.f, 25.f}, {100.f, 45.f}).contains(pos))
             {

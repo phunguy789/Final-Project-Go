@@ -141,7 +141,6 @@ void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* even
 int main()
 {
     srand(time(0));
-    game.reset();
     sf::Font font;
     if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) return 1;
     sf::RenderWindow w(sf::VideoMode({800u, 800u}), "Go Game");

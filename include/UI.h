@@ -4,6 +4,9 @@
 class UI 
 {   
     public:
+    sf::Texture fireTexture;
+    sf::Texture waterTexture;
+    
     UI();
 
     void drawSetting(sf::RenderWindow &w, sf::Font &font, Game &game);

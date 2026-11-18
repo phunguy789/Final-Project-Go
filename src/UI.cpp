@@ -8,6 +8,8 @@ using pii = pair<int, int>;
 using namespace std;
 UI::UI()
 {
+    if (fireTexture.loadFromFile("assets/stones/fire_stone.png"));
+    if (waterTexture.loadFromFile("assets/stones/water_stone.png"));
 }
 void UI::drawBackbutton(sf::RenderWindow &w, sf::Font &font)
 {
@@ -34,7 +36,7 @@ void UI::drawSetting(sf::RenderWindow &w, sf::Font &font, Game &game)
     drawBackbutton(w, font);
 
     drawBoardTheme(w, font, game);
-    // drawStoneTheme(w, font, game);
+    drawStoneTheme(w, font, game);
     // drawSoundSettings(w, font, game);
     // drawMusicSettings(w, font, game);
 }
@@ -57,7 +59,7 @@ void UI::drawBoardTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
     for (int i = 0; i < 3; i++)
     {
         sf::RectangleShape button({130.f, 65.f});
-        button.setPosition({125.f + i * 200.f, 140.f});
+        button.setPosition({125.f + i * 200.f, 130.f});
         button.setFillColor(colors[i]);
         button.setOutlineThickness(4.f);
 
@@ -66,7 +68,7 @@ void UI::drawBoardTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
 
         sf::Text text(font, names[i], 20);
         float textWidth = text.getLocalBounds().size.x;
-        text.setPosition({125.f + i * 200.f + (130.f - textWidth) / 2.f, 160.f});
+        text.setPosition({125.f + i * 200.f + (130.f - textWidth) / 2.f, 150.f});
         text.setFillColor(i == 1 ? sf::Color::White : sf::Color(40, 30, 20));
 
         w.draw(button);
@@ -75,7 +77,83 @@ void UI::drawBoardTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
 }
 void UI::drawStoneTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
+    sf::Text title(font, "STONE THEME", 25);
+    title.setPosition({300.f, 210.f});
+    title.setFillColor(sf::Color(40, 30, 20));
+    w.draw(title);
 
+    string names[2] = {"CLASSIC", "CARTOON"};
+
+    sf::Color colors[3] =
+    {
+        sf::Color(220, 179, 92),
+        sf::Color(220, 179, 92),
+    };
+
+    for (int i = 0; i < 2; i++)
+    {
+        sf::RectangleShape button({140.f, 90.f});
+        button.setPosition({220.f + i * 200.f, 260.f});
+        button.setFillColor(colors[i]);
+        button.setOutlineThickness(4.f);
+
+        if (game.stoneTheme == i) button.setOutlineColor(sf::Color::Red);
+        else button.setOutlineColor(sf::Color(75, 45, 20));
+
+        w.draw(button);
+
+        if (i == 0)
+        {
+            sf::CircleShape blackStone(30.f);
+            blackStone.setOrigin({30.f, 30.f});
+            blackStone.setPosition({270.f, 305.f});
+            blackStone.setFillColor(sf::Color(25, 25, 25));
+            blackStone.setOutlineThickness(1.f);
+            blackStone.setOutlineColor(sf::Color(70, 70, 70));
+
+            sf::CircleShape whiteStone(30.f);
+            whiteStone.setOrigin({30.f, 30.f});
+            whiteStone.setPosition({310.f, 305.f});
+            whiteStone.setFillColor(sf::Color(250, 250, 250));
+            whiteStone.setOutlineThickness(1.f);
+            whiteStone.setOutlineColor(sf::Color(150, 150, 150));
+
+            w.draw(blackStone);
+            w.draw(whiteStone);
+        }
+        else if (i == 1)
+        {
+            sf::Sprite fire(fireTexture);
+
+            sf::Vector2f fireSize = fire.getLocalBounds().size;
+            fire.setOrigin(fireSize / 2.f);
+            fire.setScale({
+                65.f / fireSize.x,
+                65.f / fireSize.y
+            });
+            fire.setPosition({470.f, 305.f});
+
+            sf::Sprite water(waterTexture);
+
+            sf::Vector2f waterSize = water.getLocalBounds().size;
+            water.setOrigin(waterSize / 2.f);
+            water.setScale({
+                65.f / waterSize.x,
+                65.f / waterSize.y
+            });
+            water.setPosition({510.f, 305.f});
+
+            w.draw(fire);
+            w.draw(water);
+        }
+
+        sf::Text text(font, names[i], 20);
+        float textWidth = text.getLocalBounds().size.x;
+        text.setPosition({220.f + i * 200.f + (140.f - textWidth) / 2.f, 360.f});
+        text.setFillColor(sf::Color(40, 30, 20));
+
+        w.draw(text);
+    }
 }
 void UI::drawSoundSettings(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
@@ -120,16 +198,33 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
             if (game.board.a[i][j] == 0)
                 continue;
 
-            sf::CircleShape stone(cell * 0.42f);
-            stone.setOrigin(sf::Vector2f(cell * 0.42f, cell * 0.42f));
-            stone.setPosition(sf::Vector2f(x0 + j * cell, y0 + i * cell));
+            float x = x0 + j * cell;
+            float y = y0 + i * cell;
+            if (game.stoneTheme == 0)
+            {            
+                sf::CircleShape stone(cell * 0.42f);
+                stone.setOrigin(sf::Vector2f(cell * 0.42f, cell * 0.42f));
+                stone.setPosition({x, y});
 
-            if (game.board.a[i][j] == 1) stone.setFillColor(sf::Color::Black);
-            else stone.setFillColor(sf::Color::White);
+                if (game.board.a[i][j] == 1) stone.setFillColor(sf::Color::Black);
+                else stone.setFillColor(sf::Color::White);
 
-            stone.setOutlineThickness(1.f);
-            stone.setOutlineColor(sf::Color(60, 60, 60));
-            w.draw(stone);
+                stone.setOutlineThickness(1.f);
+                stone.setOutlineColor(sf::Color(60, 60, 60));
+                w.draw(stone);
+            }
+            else if (game.stoneTheme == 1)
+            {
+                sf::Sprite stone(game.board.a[i][j] == 1 ? fireTexture : waterTexture);
+                sf::Vector2f size = stone.getLocalBounds().size;
+
+                stone.setOrigin(size / 2.f);
+                float scale = (cell * 0.95f) / std::max(size.x, size.y);
+                stone.setScale({scale, scale});
+                stone.setPosition({x, y});
+
+                w.draw(stone);
+            }
         }
     }
 

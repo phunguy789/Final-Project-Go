@@ -18,6 +18,9 @@ UI ui;
 AI ai;
 void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
+    w.clear(sf::Color(40, 40, 40));
+    ui.drawBoard(w, font, game);
+    w.display();
     if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
     {
         if (m->button == sf::Mouse::Button::Left)
@@ -31,29 +34,44 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
             int j = static_cast<int>((pos.x - x0 + cell / 2) / cell);
             int i = static_cast<int>((pos.y - y0 + cell / 2) / cell);
 
-            if (i >= 0 && i < N &&
-                j >= 0 && j < N &&
-                game.board.a[i][j] == 0)
+            if (i >= 0 && i < N && j >= 0 && j < N && game.board.a[i][j] == 0)
             {
-                if (!game.completeMove(game.board, i, j, 1, 0))
+                if (game.mode == 2)
+                {
+                    if (!game.completeMove(game.board, i, j, 1, 0))
+                    return;
+
+                    game.highlight = {i, j};
+                    w.clear(sf::Color(40, 40, 40));
+                    ui.drawBoard(w, font, game);
+                    w.display();
+                    game.undoStack.push({game.board, game.passCount});
+
+                    this_thread::sleep_for(chrono::milliseconds(50));
+                    game.highlight = ai.makemove(game.board, 2, game.difficult, game);
+                    //                                    turn, dif
+                    game.undoStack.push({game.board, game.passCount});
+                }
+                else 
+                {
+                    if (!game.completeMove(game.board, i, j, 3 - game.turn, 0))
+                    return;
+                    game.turn = 3 - game.turn;
+                    game.highlight = {i, j};
+                    w.clear(sf::Color(40, 40, 40));
+                    ui.drawBoard(w, font, game);
+                    w.display();
+                    game.undoStack.push({game.board, game.passCount});
+                }
+            }
+            else if (sf::FloatRect({30.f, 730.f}, {100.f, 45.f}).contains(pos))
+            {
+                game.reset();
+                screen = 0;
                 return;
-
-                game.highlight = {i, j};
-                w.clear(sf::Color(40, 40, 40));
-                ui.drawBoard(w, font, game);
-                w.display();
-                game.undoStack.push({game.board, game.passCount});
-
-                this_thread::sleep_for(chrono::milliseconds(50));
-                game.highlight = ai.makemove(game.board, 2, game.difficult, game);
-                //                                    turn, dif
-                game.undoStack.push({game.board, game.passCount});
             }
         }
     }
-    w.clear(sf::Color(40, 40, 40));
-    ui.drawBoard(w, font, game);
-    w.display();
 }
 void MenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {

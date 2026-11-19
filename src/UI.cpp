@@ -238,6 +238,19 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
         mark.setFillColor(sf::Color::Red);
         w.draw(mark);
     }
+
+    sf::RectangleShape backButton({100.f, 45.f});
+    backButton.setPosition({30.f, 730.f});
+    backButton.setFillColor(sf::Color(245, 222, 179));
+    backButton.setOutlineThickness(2.f);
+    backButton.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text backText(font, "MENU", 20);
+    backText.setPosition({55.f, 740.f});
+    backText.setFillColor(sf::Color::Black);
+
+    w.draw(backButton);
+    w.draw(backText);
 }
 void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)
 {

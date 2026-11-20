@@ -239,6 +239,7 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
         w.draw(mark);
     }
 
+    //BACK TO MENU
     sf::RectangleShape backButton({100.f, 45.f});
     backButton.setPosition({30.f, 730.f});
     backButton.setFillColor(sf::Color(245, 222, 179));
@@ -251,6 +252,20 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
 
     w.draw(backButton);
     w.draw(backText);
+
+    //RESTART GAME
+    sf::RectangleShape restartButton({100.f, 45.f});
+    restartButton.setPosition({140.f, 730.f});
+    restartButton.setFillColor(sf::Color(245, 222, 179));
+    restartButton.setOutlineThickness(2.f);
+    restartButton.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text restartText(font, "RESTART", 20);
+    restartText.setPosition({145.f, 740.f});
+    restartText.setFillColor(sf::Color::Black);
+
+    w.draw(restartButton);
+    w.draw(restartText);
 }
 void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)
 {

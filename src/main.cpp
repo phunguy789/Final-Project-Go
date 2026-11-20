@@ -70,6 +70,11 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 screen = 0;
                 return;
             }
+            else if (sf::FloatRect({140.f, 730.f}, {100.f, 45.f}).contains(pos))
+            {
+                game.reset();
+                return;
+            }
         }
     }
 }

@@ -6,6 +6,11 @@
 #include <utility>
 using namespace std;
 using pii = pair<int, int>;
+struct stackElement
+{
+    Board board;
+    pii highlight;
+};
 class Game
 {
     public:
@@ -13,6 +18,7 @@ class Game
     int boardTheme = 0;
     // 0 = classic , 1 = dark , 2 = light
     int stoneTheme = 0;
+    // 0 = classic , 1 = cartoon
     bool soundEnabled = 1;
     bool musicEnabled = 1;
     float soundVolume = 50.f;
@@ -24,8 +30,8 @@ class Game
     int difficult;
     bool gameOver;
     int passCount;
-    stack<pair<Board, int>> undoStack;
-    stack<pair<Board, int>> redoStack;
+    stack<stackElement> undoStack;
+    stack<stackElement> redoStack;
 
     bool par_vis[N][N];
     pii tempPos, highlight;

@@ -160,6 +160,18 @@ void Game::undo()
         board = tmp.board; highlight = tmp.highlight;
         turn = 3 - turn;
     }
+    else 
+    {
+        if (undoStack.size() < 3) return;
+        stackElement tmp = undoStack.top();
+        undoStack.pop();
+        redoStack.push(tmp);
+        tmp = undoStack.top();
+        undoStack.pop();
+        redoStack.push(tmp);
+        tmp = undoStack.top();
+        board = tmp.board; highlight = tmp.highlight;
+    }
 }
 void Game::redo()
 {
@@ -171,6 +183,17 @@ void Game::redo()
         undoStack.push(tmp);
         board = tmp.board; highlight = tmp.highlight;
         turn = 3 - turn;
+    }
+    else 
+    {
+        if (redoStack.empty()) return;
+        stackElement tmp = redoStack.top();
+        redoStack.pop();
+        undoStack.push(tmp);
+        tmp = redoStack.top();
+        redoStack.pop();
+        undoStack.push(tmp);
+        board = tmp.board; highlight = tmp.highlight;
     }
 }
 void Game::printBoard(Board &board, string &filename)

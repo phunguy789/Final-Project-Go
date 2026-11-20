@@ -16,12 +16,12 @@ void Game::reset()
 {
     board.reset(19);       
     turn = 2;         
-    boardTheme = 0;   
     gameOver = false;    
     passCount = 0; 
     highlight = {-1, -1};      
     while (!undoStack.empty()) undoStack.pop();
     while (!redoStack.empty()) redoStack.pop();
+    undoStack.push({board, {-1, -1}});
 }
 bool Game::playMove(Board &board, int i, int j, int turn)
 {
@@ -46,9 +46,9 @@ int Game::calculateScore()
 bool Game::checkKo(Board &board, int i, int j)
 {
     if ((int)undoStack.size() < 2) return 0; 
-    pair<Board, int> state_before = undoStack.top();
+    stackElement state_before = undoStack.top();
     undoStack.pop();
-    if (isSameBoard(undoStack.top().fi, board))
+    if (isSameBoard(undoStack.top().board, board))
     {
         undoStack.push(state_before);
         return 1;
@@ -150,21 +150,28 @@ bool Game::isSameBoard(Board &This, Board &That)
 }
 void Game::undo()
 {
-    if (undoStack.empty()) return;
-    pair<Board, int> state = undoStack.top();
-    undoStack.pop();
-    board = undoStack.top().fi;
-    passCount = undoStack.top().se;
-    redoStack.push(state);
+    if (mode == 1)
+    {
+        if (undoStack.size() < 2) return;
+        stackElement tmp = undoStack.top();
+        undoStack.pop();
+        redoStack.push(tmp);
+        tmp = undoStack.top();
+        board = tmp.board; highlight = tmp.highlight;
+        turn = 3 - turn;
+    }
 }
 void Game::redo()
 {
-    if (redoStack.empty()) return;
-    pair<Board, int> state = redoStack.top();
-    redoStack.pop();
-    board = redoStack.top().fi;
-    passCount = redoStack.top().se;
-    undoStack.push(state);
+    if (mode == 1)
+    {
+        if (redoStack.empty()) return;
+        stackElement tmp = redoStack.top();
+        redoStack.pop();
+        undoStack.push(tmp);
+        board = tmp.board; highlight = tmp.highlight;
+        turn = 3 - turn;
+    }
 }
 void Game::printBoard(Board &board, string &filename)
 {

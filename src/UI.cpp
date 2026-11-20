@@ -2,6 +2,7 @@
 #include "Game.h"
 #include <cstring>
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #define fi first 
 #define se second 
 using pii = pair<int, int>;
@@ -266,6 +267,34 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
 
     w.draw(restartButton);
     w.draw(restartText);
+
+    //UNDO
+    sf::RectangleShape undoButton({100.f, 45.f});
+    undoButton.setPosition({655.f, 30.f});
+    undoButton.setFillColor(sf::Color(245, 222, 179));
+    undoButton.setOutlineThickness(2.f);
+    undoButton.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text undoText(font, "UNDO", 20);
+    undoText.setPosition({675.f, 40.f});
+    undoText.setFillColor(sf::Color::Black);
+
+    w.draw(undoButton);
+    w.draw(undoText);
+
+    //REDO
+    sf::RectangleShape redoButton({100.f, 45.f});
+    redoButton.setPosition({655.f, 90.f});
+    redoButton.setFillColor(sf::Color(245, 222, 179));
+    redoButton.setOutlineThickness(2.f);
+    redoButton.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text redoText(font, "REDO", 20);
+    redoText.setPosition({675.f, 100.f});
+    redoText.setFillColor(sf::Color::Black);
+
+    w.draw(redoButton);
+    w.draw(redoText);
 }
 void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)
 {

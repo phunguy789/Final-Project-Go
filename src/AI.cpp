@@ -143,7 +143,7 @@ int AI::minimaxAB(Board &board, int depth, int turn, int aiturn, int alpha, int 
             Board oldboard = board;
             if (!game.completeMove(board, i, j, turn, 0)) 
             { board = oldboard; continue; }
-            game.undoStack.push({board, game.passCount});
+            game.undoStack.push({board, {-1, -1}});
             int score = minimaxAB(board, depth - 1, 3 - turn, aiturn, alpha, beta, game);
             score += connectivityScore(board, i,j, turn, game);
             board = oldboard;
@@ -176,7 +176,7 @@ pii AI::findBestMove(Board& board, int depth, int aiTurn, Game &game)
         Board oldboard = board;
         if (!game.completeMove(board, i, j, aiTurn, 0)) 
         { board = oldboard; continue; }
-        game.undoStack.push({board, game.passCount});
+        game.undoStack.push({board, {-1, -1}});
         int score = minimaxAB(board, depth - 1, 3 - aiTurn, aiTurn, alpha, beta, game);
         score += connectivityScore(board, i, j, aiTurn, game);
         board = oldboard;

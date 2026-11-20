@@ -8,6 +8,9 @@
 #include <chrono>
 #include <thread>
 using namespace std;
+using pii = pair<int, int>;
+#define fi first 
+#define se second
 int screen = 0;
 // 0 : menu
 // 1 : setting
@@ -45,12 +48,13 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
                     w.display();
-                    game.undoStack.push({game.board, game.passCount});
+                    game.undoStack.push({game.board, game.highlight});
+                    while (!game.redoStack.empty()) game.redoStack.pop();
 
                     this_thread::sleep_for(chrono::milliseconds(50));
                     game.highlight = ai.makemove(game.board, 2, game.difficult, game);
                     //                                    turn, dif
-                    game.undoStack.push({game.board, game.passCount});
+                    game.undoStack.push({game.board, game.highlight});
                 }
                 else 
                 {
@@ -61,7 +65,8 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
                     w.display();
-                    game.undoStack.push({game.board, game.passCount});
+                    game.undoStack.push({game.board, game.highlight});
+                    while (!game.redoStack.empty()) game.redoStack.pop();
                 }
             }
             else if (sf::FloatRect({30.f, 730.f}, {100.f, 45.f}).contains(pos))
@@ -74,6 +79,14 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
             {
                 game.reset();
                 return;
+            }
+            else if (sf::FloatRect({655.f, 30.f}, {100.f, 45.f}).contains(pos))
+            {
+                game.undo();
+            }
+            else if (sf::FloatRect({655.f, 90.f}, {100.f, 45.f}).contains(pos))
+            {
+                game.redo();
             }
         }
     }

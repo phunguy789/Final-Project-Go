@@ -205,12 +205,12 @@ void UI::drawMusicSettings(sf::RenderWindow &w, sf::Font &font, Game &game)
     toggle.setOutlineThickness(2.f);
     toggle.setOutlineColor(sf::Color(75, 45, 20));
 
-    if (game.soundEnabled) toggle.setFillColor(sf::Color(80, 160, 90));
+    if (game.musicEnabled) toggle.setFillColor(sf::Color(80, 160, 90));
     else toggle.setFillColor(sf::Color(130, 130, 130));
 
     w.draw(toggle);
 
-    sf::Text toggleText(font, game.soundEnabled ? "ON" : "OFF", 20);
+    sf::Text toggleText(font, game.musicEnabled ? "ON" : "OFF", 20);
     float toggleWidth = toggleText.getLocalBounds().size.x;
     toggleText.setPosition({290.f + (100.f - toggleWidth) / 2.f, 495.f});
     toggleText.setFillColor(sf::Color::White);

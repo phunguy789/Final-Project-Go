@@ -21,8 +21,8 @@ class Game
     // 0 = classic , 1 = cartoon
     bool soundEnabled = 1;
     bool musicEnabled = 1;
-    float soundVolume = 100.f;
-    float musicVolume = 30.f;
+    float soundVolume = 60.f;
+    float musicVolume = 60.f;
     //
     Board board;
     int turn;

@@ -13,7 +13,7 @@ using pii = pair<int, int>;
 #define fi first 
 #define se second
 const string savefile[1] = {"save.txt"};
-int screen = 0;
+int screen = 0, debug;
 bool changing[4] = {1, 1, 1, 1};
 // 0 : menu
 // 1 : setting
@@ -34,6 +34,12 @@ bool checkcapture()
         cnt2 += game.undoStack.top().board.a[i][j] != 0;
     }
     return cnt2 >= cnt1;
+}
+void playSound()
+{
+    if (!game.soundEnabled) return;
+    if (!checkcapture()) audio.playPlace(game.soundVolume);
+    else audio.playCapture(game.soundVolume);
 }
 void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
@@ -73,15 +79,13 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
                     w.display();
-                    if (!checkcapture()) audio.playPlace(game.soundVolume);
-                    else audio.playCapture(game.soundVolume);
+                    playSound();
                     game.undoStack.push({game.board, game.highlight});
                     while (!game.redoStack.empty()) game.redoStack.pop();
 
                     this_thread::sleep_for(chrono::milliseconds(100));
                     game.highlight = ai.makemove(game.board, 2, game.difficult, game);
-                    if (!checkcapture()) audio.playPlace(game.soundVolume);
-                    else audio.playCapture(game.soundVolume);
+                    playSound();
                     //                                    turn, dif
                     game.undoStack.push({game.board, game.highlight});
                 }
@@ -94,8 +98,7 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
                     w.display();
-                    if (!checkcapture()) audio.playPlace(game.soundVolume);
-                    else audio.playCapture(game.soundVolume);
+                    playSound();
                     game.undoStack.push({game.board, game.highlight});
                     while (!game.redoStack.empty()) game.redoStack.pop();
                 }
@@ -247,13 +250,35 @@ void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* even
             {
                 screen = 0;
             }
+            else if (sf::FloatRect({290.f, 405.f}, {100.f, 45.f}).contains(pos))
+            {
+                game.soundEnabled = !game.soundEnabled;
+            }
+            else if (sf::FloatRect({290.f, 485.f}, {100.f, 45.f}).contains(pos))
+            {
+                if (game.musicEnabled) audio.backgroundMusic.pause();
+                else audio.backgroundMusic.play();
+                game.musicEnabled = !game.musicEnabled;
+            }
+            else if (sf::FloatRect({455.f, 405.f}, {10*27.f, 35.f}).contains(pos))
+            {
+                int index = (int)((pos.x - 455.f) / 27.f);
+                game.soundVolume = (index + 1) * 10.f;
+                audio.placeSound.setVolume(game.soundVolume);
+            }
+            else if (sf::FloatRect({455.f, 485.f}, {10*27.f, 35.f}).contains(pos))
+            {
+                int index = (int)((pos.x - 455.f) / 27.f);
+                game.musicVolume = (index + 1) * 10.f;
+                audio.backgroundMusic.setVolume(game.musicVolume / 2.f);
+            }
             changing[screen] = 1;
         }
     }
 }
 int main()
 {
-    audio.backgroundMusic.setVolume(game.musicVolume);
+    audio.backgroundMusic.setVolume(game.musicVolume / 2.f);
     audio.backgroundMusic.play();
     srand(time(0));
     sf::Font font;

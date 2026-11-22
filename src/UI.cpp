@@ -38,8 +38,8 @@ void UI::drawSetting(sf::RenderWindow &w, sf::Font &font, Game &game)
 
     drawBoardTheme(w, font, game);
     drawStoneTheme(w, font, game);
-    // drawSoundSettings(w, font, game);
-    // drawMusicSettings(w, font, game);
+    drawSoundSettings(w, font, game);
+    drawMusicSettings(w, font, game);
 }
 void UI::drawBoardTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
@@ -158,11 +158,49 @@ void UI::drawStoneTheme(sf::RenderWindow &w, sf::Font &font, Game &game)
 }
 void UI::drawSoundSettings(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
+    sf::Text title(font, "SOUND EFFECTS", 25);
+    title.setPosition({10.f, 410.f});
+    title.setFillColor(sf::Color(40, 30, 20));
+    w.draw(title);
 
+    sf::RectangleShape toggle({100.f, 45.f});
+    toggle.setPosition({290.f, 405.f});
+    toggle.setOutlineThickness(2.f);
+    toggle.setOutlineColor(sf::Color(75, 45, 20));
+
+    if (game.soundEnabled) toggle.setFillColor(sf::Color(80, 160, 90));
+    else toggle.setFillColor(sf::Color(130, 130, 130));
+
+    w.draw(toggle);
+
+    sf::Text toggleText(font, game.soundEnabled ? "ON" : "OFF", 20);
+    float toggleWidth = toggleText.getLocalBounds().size.x;
+    toggleText.setPosition({290.f + (100.f - toggleWidth) / 2.f, 415.f});
+    toggleText.setFillColor(sf::Color::White);
+    w.draw(toggleText);
 }
 void UI::drawMusicSettings(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
+    sf::Text title(font, "BACKGROUND MUSIC", 25);
+    title.setPosition({10.f, 490.f});
+    title.setFillColor(sf::Color(40, 30, 20));
+    w.draw(title);
 
+    sf::RectangleShape toggle({100.f, 45.f});
+    toggle.setPosition({290.f, 485.f});
+    toggle.setOutlineThickness(2.f);
+    toggle.setOutlineColor(sf::Color(75, 45, 20));
+
+    if (game.soundEnabled) toggle.setFillColor(sf::Color(80, 160, 90));
+    else toggle.setFillColor(sf::Color(130, 130, 130));
+
+    w.draw(toggle);
+
+    sf::Text toggleText(font, game.soundEnabled ? "ON" : "OFF", 20);
+    float toggleWidth = toggleText.getLocalBounds().size.x;
+    toggleText.setPosition({290.f + (100.f - toggleWidth) / 2.f, 495.f});
+    toggleText.setFillColor(sf::Color::White);
+    w.draw(toggleText);
 }
 void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
 {

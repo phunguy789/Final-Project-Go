@@ -221,7 +221,7 @@ void UI::drawMusicSettings(sf::RenderWindow &w, sf::Font &font, Game &game)
         sf::RectangleShape block({25.f, 35.f});
         block.setPosition({455.f + i * 27.f, 485.f});
 
-        if (i < game.soundVolume / 10.f) block.setFillColor(sf::Color(80, 160, 90));
+        if (i < game.musicVolume / 10.f) block.setFillColor(sf::Color(80, 160, 90));
         else block.setFillColor(sf::Color(190, 190, 190));
 
         block.setOutlineThickness(1.f);

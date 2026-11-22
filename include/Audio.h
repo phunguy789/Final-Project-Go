@@ -18,4 +18,4 @@ class Audio
     void playPlace(float volume);
     void playCapture(float volume);
     void playGameOver(float volume);
-}
+};

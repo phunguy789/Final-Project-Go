@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "UI.h"
 #include "AI.h"
+#include "Audio.h"
 #include <algorithm>
 #include <iostream>
 #include <chrono>
@@ -21,7 +22,19 @@ bool changing[4] = {1, 1, 1, 1};
 Game game;
 UI ui;
 AI ai;
+Audio audio;
 int saveload = 2, tmpcheck = 2;
+bool checkcapture()
+{
+    int cnt1 = 0, cnt2 = 0;
+    for (int i = 0; i < N; i++)
+    for (int j = 0; j < N; j++)
+    {
+        cnt1 += game.board.a[i][j] != 0;
+        cnt2 += game.undoStack.top().board.a[i][j] != 0;
+    }
+    return cnt2 >= cnt1;
+}
 void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
     if (changing[screen])
@@ -60,11 +73,15 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
                     w.display();
+                    if (!checkcapture()) audio.playPlace(game.soundVolume);
+                    else audio.playCapture(game.soundVolume);
                     game.undoStack.push({game.board, game.highlight});
                     while (!game.redoStack.empty()) game.redoStack.pop();
 
-                    this_thread::sleep_for(chrono::milliseconds(50));
+                    this_thread::sleep_for(chrono::milliseconds(100));
                     game.highlight = ai.makemove(game.board, 2, game.difficult, game);
+                    if (!checkcapture()) audio.playPlace(game.soundVolume);
+                    else audio.playCapture(game.soundVolume);
                     //                                    turn, dif
                     game.undoStack.push({game.board, game.highlight});
                 }
@@ -77,6 +94,8 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
                     w.display();
+                    if (!checkcapture()) audio.playPlace(game.soundVolume);
+                    else audio.playCapture(game.soundVolume);
                     game.undoStack.push({game.board, game.highlight});
                     while (!game.redoStack.empty()) game.redoStack.pop();
                 }
@@ -234,6 +253,8 @@ void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* even
 }
 int main()
 {
+    audio.backgroundMusic.setVolume(game.musicVolume);
+    audio.backgroundMusic.play();
     srand(time(0));
     sf::Font font;
     if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) return 1;

@@ -178,6 +178,20 @@ void UI::drawSoundSettings(sf::RenderWindow &w, sf::Font &font, Game &game)
     toggleText.setPosition({290.f + (100.f - toggleWidth) / 2.f, 415.f});
     toggleText.setFillColor(sf::Color::White);
     w.draw(toggleText);
+
+    for (int i = 0; i < 10; i++)
+    {
+        sf::RectangleShape block({25.f, 35.f});
+        block.setPosition({455.f + i * 27.f, 405.f});
+
+        if (i < game.soundVolume / 10.f) block.setFillColor(sf::Color(80, 160, 90));
+        else block.setFillColor(sf::Color(190, 190, 190));
+
+        block.setOutlineThickness(1.f);
+        block.setOutlineColor(sf::Color(75, 45, 20));
+
+        w.draw(block);
+    }
 }
 void UI::drawMusicSettings(sf::RenderWindow &w, sf::Font &font, Game &game)
 {
@@ -201,6 +215,20 @@ void UI::drawMusicSettings(sf::RenderWindow &w, sf::Font &font, Game &game)
     toggleText.setPosition({290.f + (100.f - toggleWidth) / 2.f, 495.f});
     toggleText.setFillColor(sf::Color::White);
     w.draw(toggleText);
+
+    for (int i = 0; i < 10; i++)
+    {
+        sf::RectangleShape block({25.f, 35.f});
+        block.setPosition({455.f + i * 27.f, 485.f});
+
+        if (i < game.soundVolume / 10.f) block.setFillColor(sf::Color(80, 160, 90));
+        else block.setFillColor(sf::Color(190, 190, 190));
+
+        block.setOutlineThickness(1.f);
+        block.setOutlineColor(sf::Color(75, 45, 20));
+
+        w.draw(block);
+    }
 }
 void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
 {

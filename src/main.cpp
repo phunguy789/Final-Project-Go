@@ -24,6 +24,7 @@ UI ui;
 AI ai;
 Audio audio;
 int saveload = 2, tmpcheck = 2;
+// 0 : fail , 1 : success , 2 : no display
 bool checkcapture()
 {
     int cnt1 = 0, cnt2 = 0;

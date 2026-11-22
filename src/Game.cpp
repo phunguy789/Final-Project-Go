@@ -196,46 +196,92 @@ void Game::redo()
         board = tmp.board; highlight = tmp.highlight;
     }
 }
-void Game::printBoard(Board &board, string &filename)
-{
-    ofstream file(filename);
-    for (int i = 0; i < N; i++)
-    {
-        for (int j = 0; j < N; j++) 
-        file << board.a[i][j] << " ";
-        cout << "\n";
-    }
-    file.close();
-}
-bool Game::saveGame(string &filename)
+bool Game::saveGame(string filename)
 {
     ofstream file(filename);
     if (!file.is_open()) return 0;
 
-    printBoard(board, filename);
-
     file << turn << "\n";
-    file << mode << "\n";
     file << difficult << "\n";
     file << gameOver << "\n";
     file << passCount << "\n";
 
+    stack<stackElement> tmp, rollback = undoStack;
+    file << undoStack.size() << "\n";
+    while (!undoStack.empty()) tmp.push(undoStack.top()), undoStack.pop();
+    undoStack = rollback;
+    while (!tmp.empty())
+    {
+        stackElement x = tmp.top();
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = 0; j < N; j++) 
+            file << x.board.a[i][j] << " ";
+            file << "\n";
+        }
+        file << x.highlight.fi << " " << x.highlight.se << "\n";
+        tmp.pop();
+    }
+    
+    rollback = redoStack;
+    file << redoStack.size() << "\n";
+    while (!redoStack.empty()) tmp.push(redoStack.top()), redoStack.pop();
+    redoStack = rollback;
+    while (!tmp.empty())
+    {
+        stackElement x = tmp.top();
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = 0; j < N; j++) 
+            file << x.board.a[i][j] << " ";
+            file << "\n";
+        }
+        file << x.highlight.fi << " " << x.highlight.se << "\n";
+        tmp.pop();
+    }
+
     file.close();
     return 1;
 }
-bool Game::loadGame(string& filename)
+bool Game::loadGame(string filename)
 {
     ifstream file(filename);
     if (!file.is_open()) return 0;
 
-    for (int i = 0; i < N; i++)
-    for (int j = 0; j < N; j++) file >> board.a[i][j];
+    int temp;
+    if (!(file >> temp)) return 0;
 
-    file >> turn;
-    file >> mode;
+    turn = temp;
     file >> difficult;
     file >> gameOver;
     file >> passCount;
+
+    while (!undoStack.empty()) undoStack.pop();
+    while (!redoStack.empty()) redoStack.pop();
+    int sz;
+
+    file >> sz;
+    while (sz--)
+    {
+        stackElement tmp;
+        for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++) file >> tmp.board.a[i][j];
+        file >> tmp.highlight.fi >> tmp.highlight.se;
+        undoStack.push(tmp);
+    }    
+
+    file >> sz;
+    while (sz--)
+    {
+        stackElement tmp;
+        for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++) file >> tmp.board.a[i][j];
+        file >> tmp.highlight.fi >> tmp.highlight.se;
+        redoStack.push(tmp);
+    }  
+
+    board = undoStack.top().board;
+    highlight = undoStack.top().highlight;
 
     file.close();
     return 1;

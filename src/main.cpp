@@ -11,7 +11,9 @@ using namespace std;
 using pii = pair<int, int>;
 #define fi first 
 #define se second
+const string savefile[1] = {"save.txt"};
 int screen = 0;
+bool changing[4] = {1, 1, 1, 1};
 // 0 : menu
 // 1 : setting
 // 2 : difficulty menu
@@ -19,11 +21,21 @@ int screen = 0;
 Game game;
 UI ui;
 AI ai;
+int saveload = 2, tmpcheck = 2;
 void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
-    w.clear(sf::Color(40, 40, 40));
-    ui.drawBoard(w, font, game);
-    w.display();
+    if (changing[screen])
+    {
+        w.clear(sf::Color(40, 40, 40));
+        ui.drawBoard(w, font, game);
+        if (saveload != 2)
+        {
+            ui.drawNotification(w, font, tmpcheck, saveload);
+            saveload = 2;
+        }
+        w.display();
+        changing[screen] = 0;
+    }
     if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
     {
         if (m->button == sf::Mouse::Button::Left)
@@ -73,12 +85,10 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
             {
                 game.reset();
                 screen = 0;
-                return;
             }
             else if (sf::FloatRect({140.f, 730.f}, {100.f, 45.f}).contains(pos))
             {
                 game.reset();
-                return;
             }
             else if (sf::FloatRect({655.f, 30.f}, {100.f, 45.f}).contains(pos))
             {
@@ -88,14 +98,35 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
             {
                 game.redo();
             }
+            else if (sf::FloatRect({655.f, 150.f}, {100.f, 45.f}).contains(pos))
+            {
+                if (game.mode == 1)
+                {
+                    bool check = game.saveGame(savefile[0]);
+                    saveload = 0; tmpcheck = check;
+                }
+            }
+            else if (sf::FloatRect({655.f, 210.f}, {100.f, 45.f}).contains(pos))
+            {
+                if (game.mode == 1)
+                {
+                    bool check = game.loadGame(savefile[0]);
+                    saveload = 1; tmpcheck = check;
+                }
+            }
+            changing[screen] = 1;
         }
     }
 }
 void MenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
-    w.clear(sf::Color(40, 40, 40));
-    ui.drawMenu(w, font);
-    w.display();
+    if (changing[screen])
+    {
+        w.clear(sf::Color(40, 40, 40));
+        ui.drawMenu(w, font);
+        w.display();
+        changing[screen] = 0;
+    }
     if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
     {
         if (m->button == sf::Mouse::Button::Left)
@@ -116,14 +147,19 @@ void MenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
             {
                 screen = 1;
             }
+            changing[screen] = 1;
         }
     }
 }
 void DifficultymenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
-    w.clear(sf::Color(40, 40, 40));
-    ui.drawDifficultyMenu(w, font);
-    w.display();
+    if (changing[screen])
+    {
+        w.clear(sf::Color(40, 40, 40));
+        ui.drawDifficultyMenu(w, font);
+        w.display();
+        changing[screen] = 0;
+    }
     if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
     {
         if (m->button == sf::Mouse::Button::Left)
@@ -149,14 +185,19 @@ void DifficultymenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Even
             {
                 screen = 0;
             }
+            changing[screen] = 1;
         }
     }
 }
 void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
-    w.clear(sf::Color(40, 40, 40));
-    ui.drawSetting(w, font, game);
-    w.display();
+    if (changing[screen])
+    {
+        w.clear(sf::Color(40, 40, 40));
+        ui.drawSetting(w, font, game);
+        w.display();
+        changing[screen] = 0;
+    }
     if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
     {
         if (m->button == sf::Mouse::Button::Left)
@@ -187,6 +228,7 @@ void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* even
             {
                 screen = 0;
             }
+            changing[screen] = 1;
         }
     }
 }

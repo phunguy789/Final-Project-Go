@@ -295,6 +295,54 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
 
     w.draw(redoButton);
     w.draw(redoText);
+
+    //SAVEGAME
+    sf::RectangleShape savegameButton({100.f, 45.f});
+    savegameButton.setPosition({655.f, 150.f});
+    savegameButton.setFillColor(sf::Color(245, 222, 179));
+    savegameButton.setOutlineThickness(2.f);
+    savegameButton.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text savegameText(font, "SAVE", 20);
+    savegameText.setPosition({680.f, 160.f});
+    savegameText.setFillColor(sf::Color::Black);
+
+    w.draw(savegameButton);
+    w.draw(savegameText);
+
+    //LOADGAME
+    sf::RectangleShape loadgameButton({100.f, 45.f});
+    loadgameButton.setPosition({655.f, 210.f});
+    loadgameButton.setFillColor(sf::Color(245, 222, 179));
+    loadgameButton.setOutlineThickness(2.f);
+    loadgameButton.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text loadgameText(font, "LOAD", 20);
+    loadgameText.setPosition({680.f, 220.f});
+    loadgameText.setFillColor(sf::Color::Black);
+
+    w.draw(loadgameButton);
+    w.draw(loadgameText);
+}
+void UI::drawNotification(sf::RenderWindow &w, sf::Font &font, bool check, bool type)
+{
+    string str;
+    if (type == 0)
+    {
+        str = "SAVED";
+        if (!check) str = "SAVE";
+    }
+    else 
+    {
+        str = "LOADED";
+        if (!check) str = "LOAD";
+    }
+    if (check) str += " SUCCESSFULLY";
+    else str += " FAILED";
+    sf::Text NofiText(font, str, 30);
+    NofiText.setPosition({200.f, 650.f});
+    NofiText.setFillColor(sf::Color::White);
+    w.draw(NofiText);
 }
 void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)
 {

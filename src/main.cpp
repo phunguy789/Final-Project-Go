@@ -43,22 +43,22 @@ void playSound()
 }
 void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
-    if (changing[screen])
-    {
-        w.clear(sf::Color(40, 40, 40));
-        ui.drawBoard(w, font, game);
-        if (saveload != 2)
-        {
-            ui.drawNotification(w, font, tmpcheck, saveload);
-            saveload = 2;
-        }
-        w.display();
-        changing[screen] = 0;
-    }
+    // if (changing[screen])
+    // {
+    //     w.clear(sf::Color(40, 40, 40));
+    //     ui.drawBoard(w, font, game);
+    //     if (saveload != 2)
+    //     {
+    //         ui.drawNotification(w, font, tmpcheck, saveload);
+    //     }
+    //     w.display();
+    //     changing[screen] = 0;
+    // }
     if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
     {
         if (m->button == sf::Mouse::Button::Left)
         {
+            saveload = 2;
             sf::Vector2f pos = w.mapPixelToCoords(m->position);
 
             float x0 = 50.f;
@@ -142,13 +142,13 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 }
 void MenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
-    if (changing[screen])
-    {
-        w.clear(sf::Color(40, 40, 40));
-        ui.drawMenu(w, font);
-        w.display();
-        changing[screen] = 0;
-    }
+    // if (changing[screen])
+    // {
+    //     w.clear(sf::Color(40, 40, 40));
+    //     ui.drawMenu(w, font);
+    //     w.display();
+    //     changing[screen] = 0;
+    // }
     if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
     {
         if (m->button == sf::Mouse::Button::Left)
@@ -175,13 +175,13 @@ void MenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 }
 void DifficultymenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
-    if (changing[screen])
-    {
-        w.clear(sf::Color(40, 40, 40));
-        ui.drawDifficultyMenu(w, font);
-        w.display();
-        changing[screen] = 0;
-    }
+    // if (changing[screen])
+    // {
+    //     w.clear(sf::Color(40, 40, 40));
+    //     ui.drawDifficultyMenu(w, font);
+    //     w.display();
+    //     changing[screen] = 0;
+    // }
     if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
     {
         if (m->button == sf::Mouse::Button::Left)
@@ -213,13 +213,13 @@ void DifficultymenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Even
 }
 void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
-    if (changing[screen])
-    {
-        w.clear(sf::Color(40, 40, 40));
-        ui.drawSetting(w, font, game);
-        w.display();
-        changing[screen] = 0;
-    }
+    // if (changing[screen])
+    // {
+    //     w.clear(sf::Color(40, 40, 40));
+    //     ui.drawSetting(w, font, game);
+    //     w.display();
+    //     changing[screen] = 0;
+    // }
     if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
     {
         if (m->button == sf::Mouse::Button::Left)
@@ -283,7 +283,7 @@ int main()
     srand(time(0));
     sf::Font font;
     if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) return 1;
-    sf::RenderWindow w(sf::VideoMode({800u, 800u}), "Go Game");
+    sf::RenderWindow w(sf::VideoMode({900u, 900u}), "Go Game");
     sf::View view(sf::FloatRect({0.f, 0.f}, {800.f, 800.f}));
     auto resizeView = [&]()
     {
@@ -304,7 +304,10 @@ int main()
             w.close();
 
             if (event->is<sf::Event::Resized>())
-            resizeView();
+            {
+                changing[screen] = 1;
+                resizeView();
+            }
 
             if (screen == 0)
                 MenuOperation(w, font, &(*event));
@@ -317,6 +320,23 @@ int main()
             else
             if (screen == 3)
                 BoardOperation(w, font, &(*event));
+        }
+        if (changing[screen])
+        {
+            w.clear(sf::Color(40, 40, 40));
+            if (screen == 0) ui.drawMenu(w, font);
+            else if (screen == 1) ui.drawSetting(w, font, game);
+            else if (screen == 2) ui.drawDifficultyMenu(w, font);
+            else if (screen == 3) 
+            {
+                ui.drawBoard(w, font, game);
+                if (saveload != 2)
+                {
+                    ui.drawNotification(w, font, tmpcheck, saveload);
+                }
+            }
+            w.display();
+            changing[screen] = 0;
         }
     }
 }

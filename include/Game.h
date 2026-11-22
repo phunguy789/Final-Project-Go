@@ -56,9 +56,8 @@ class Game
     void redo();
     bool isSameBoard(Board &This, Board &That);
 
-    void printBoard(Board &board, string &filename);
-    bool saveGame(string &filename);
-    bool loadGame(string &filename);
+    bool saveGame(string filename);
+    bool loadGame(string filename);
 
     int d1[4] = {1, -1, 0, 0},
         d2[4] = {0, 0, 1, -1};

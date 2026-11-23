@@ -437,7 +437,7 @@ void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)
     button2.setOutlineColor(sf::Color(75, 45, 20));
 
     sf::Text text2(font, "PLAYER VS BOT", 25);
-    text2.setPosition(sf::Vector2f(295.f, 430.f));
+    text2.setPosition(sf::Vector2f(302.f, 430.f));
     text2.setFillColor(sf::Color(40, 30, 20));
 
     sf::RectangleShape button3(sf::Vector2f(320.f, 75.f));
@@ -450,11 +450,22 @@ void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)
     text3.setPosition(sf::Vector2f(340.f, 540.f));
     text3.setFillColor(sf::Color(40, 30, 20));
 
+    sf::RectangleShape button4(sf::Vector2f(320.f, 75.f));
+    button4.setPosition(sf::Vector2f(240.f, 630.f));
+    button4.setFillColor(sf::Color(245, 179, 179));
+    button4.setOutlineThickness(3.f);
+    button4.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text text4(font, "EXIT GAME", 25);
+    text4.setPosition(sf::Vector2f(330.f, 650.f));
+    text4.setFillColor(sf::Color(40, 30, 20));
+
     w.draw(background);
     w.draw(title);
     w.draw(button1); w.draw(text1);
     w.draw(button2); w.draw(text2);
     w.draw(button3); w.draw(text3);
+    w.draw(button4); w.draw(text4);
 }
 void UI::drawDifficultyMenu(sf::RenderWindow &w, sf::Font &font)
 {

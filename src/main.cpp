@@ -170,6 +170,10 @@ void MenuOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
             {
                 screen = 1;
             }
+            else if (sf::FloatRect({240.f, 630.f}, {320.f, 75.f}).contains(pos))
+            {
+                w.close();
+            }
             changing[screen] = 1;
         }
     }

@@ -14,7 +14,7 @@ using pii = pair<int, int>;
 #define se second
 const string savefile[4] = {"save.txt", "save_ai_easy.txt", "save_ai_medium.txt", "save_ai_hard.txt"};
 int screen = 0, debug;
-bool changing[4] = {1, 1, 1, 1};
+bool changing[5] = {1, 1, 1, 1, 1};
 // 0 : menu
 // 1 : setting
 // 2 : difficulty menu
@@ -85,6 +85,8 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 {
                     if (!game.completeMove(game.board, i, j, 1, 0))
                     return;
+
+                    game.black += game.tempval;
                     game.passCount = 0;
                     game.turn = 3 - game.turn;
                     game.highlight = {i, j};
@@ -101,8 +103,11 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 {
                     if (!game.completeMove(game.board, i, j, 3 - game.turn, 0))
                     return;
+
                     game.passCount = 0;
                     game.turn = 3 - game.turn;
+                    if (game.turn == 1) game.black += game.tempval;
+                    else game.white += game.tempval;
                     game.highlight = {i, j};
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
@@ -153,7 +158,12 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 game.undoStack.push({game.board, game.highlight, game.passCount});
                 while (!game.redoStack.empty()) game.redoStack.pop();
                 
-                if (game.checkGameOver()) screen = 4;
+                if (game.checkGameOver())
+                {
+                    screen = 4;
+                    changing[screen] = 1;
+                    return;
+                }
 
                 if (game.mode == 2) AIplay();
             }
@@ -301,6 +311,23 @@ void SettingOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* even
         }
     }
 }
+void GameoverOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
+{
+    if (const auto* m = event->getIf<sf::Event::MouseButtonPressed>())
+    {
+        if (m->button == sf::Mouse::Button::Left)
+        {
+            sf::Vector2f pos = w.mapPixelToCoords(m->position);
+
+            if (sf::FloatRect({30, 25}, {100.f, 45.f}).contains(pos))
+            {
+                screen = 0;
+                game.reset();
+            }
+            changing[screen] = 1;
+        }
+    }
+}
 int main()
 {
     audio.backgroundMusic.setVolume(game.musicVolume / 2.f);
@@ -345,6 +372,9 @@ int main()
             else
             if (screen == 3)
                 BoardOperation(w, font, &(*event));
+            else
+            if (screen == 4)
+                GameoverOperation(w, font, &(*event));
         }
         if (changing[screen])
         {

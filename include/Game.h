@@ -26,6 +26,7 @@ class Game
     float musicVolume = 60.f;
     //
     Board board;
+    int black, white;
     int turn;
     int mode; // 1 = pvp, 2 = pve
     int difficult;
@@ -36,12 +37,13 @@ class Game
 
     bool par_vis[N][N];
     pii tempPos, highlight;
+    int tempval;
     int calScore[5] = {0, -15, -5, 2, 3};
 
     Game();
 
     void reset();
-    bool playMove(Board &board, int i, int j, int turn);
+    int playMove(Board &board, int i, int j, int turn);
     void passTurn();
     bool checkGameOver();
     pii calculateScore();

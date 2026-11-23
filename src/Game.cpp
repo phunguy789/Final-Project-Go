@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include <queue>
 #include "Game.h"
 #include "Board.h"
 using namespace std;
@@ -14,7 +15,8 @@ Game::Game()
 }
 void Game::reset()
 {
-    board.reset(19);       
+    board.reset(19);     
+    black = white = 0;  
     turn = 2;         
     gameOver = false;    
     passCount = 0; 
@@ -23,11 +25,10 @@ void Game::reset()
     while (!redoStack.empty()) redoStack.pop();
     undoStack.push({board, {-1, -1}, 0});
 }
-bool Game::playMove(Board &board, int i, int j, int turn)
+int Game::playMove(Board &board, int i, int j, int turn)
 {
     board.a[i][j] = turn;
-    captureGroups(board, i, j);
-    return 1;
+    return captureGroups(board, i, j);
 }
 void Game::passTurn()
 {
@@ -41,7 +42,44 @@ bool Game::checkGameOver()
 }
 pii Game::calculateScore()
 {
-    return {0, 0};
+    int territoryBlack = 0;
+    int territoryWhite = 0;
+    bool territoryVis[N][N] = {};
+    for (int i = 0; i < N; i++)
+    for (int j = 0; j < N; j++)
+    {
+        if (board.a[i][j] != 0 || territoryVis[i][j]) continue;
+        queue<pii> q;
+        q.push({i, j});
+        territoryVis[i][j] = true;
+        int cnt = 0;
+        bool borderBlack = false;
+        bool borderWhite = false;
+        while (!q.empty())
+        {
+            pii u = q.front();
+            q.pop();
+            cnt++;
+            for (int k = 0; k < 4; k++)
+            {
+                int x = u.first + d1[k];
+                int y = u.second + d2[k];
+                if (min(x, y) < 0 || max(x, y) >= N) continue;
+                if (board.a[x][y] == 1) borderBlack = true;
+                else if (board.a[x][y] == 2) borderWhite = true;
+                else if (!territoryVis[x][y])
+                {
+                    territoryVis[x][y] = true;
+                    q.push({x, y});
+                }
+            }
+        }
+        if (borderBlack && !borderWhite) territoryBlack += cnt;
+        else if (borderWhite && !borderBlack) territoryWhite += cnt;
+    }
+    black += territoryBlack;
+    white += territoryWhite;
+    return {black, white};
 }
 bool Game::checkKo(Board &board, int i, int j)
 {
@@ -67,7 +105,7 @@ bool Game::completeMove(Board &board, int i, int j, int turn, bool rollback)
     if (min(i, j) < 0 || max(i, j) >= N) return 0;
     if (board.a[i][j] != 0) return 0;
     Board oldboard = board;
-    playMove(board, i, j, turn);
+    tempval = playMove(board, i, j, turn);
     if (checkKo(board, i, j)) 
     {
         board = oldboard;

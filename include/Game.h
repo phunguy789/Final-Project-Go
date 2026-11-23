@@ -44,7 +44,7 @@ class Game
     bool playMove(Board &board, int i, int j, int turn);
     void passTurn();
     bool checkGameOver();
-    int calculateScore();
+    pii calculateScore();
 
     bool completeMove(Board &board, int i, int j, int turn, bool rollback);
     vector<pii> getGroup(Board &board, int i, int j);

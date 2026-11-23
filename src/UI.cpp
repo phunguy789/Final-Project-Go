@@ -3,6 +3,7 @@
 #include <cstring>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <iomanip>
 #define fi first 
 #define se second 
 using pii = pair<int, int>;
@@ -594,4 +595,102 @@ void UI::drawGameover(sf::RenderWindow &w, sf::Font &font, Game &game)
     background.setPosition(sf::Vector2f(0.f, 0.f));
     background.setFillColor(sf::Color(243, 235, 221));
     w.draw(background);
+
+    sf::Text title(font, "GAME OVER", 52);
+    title.setPosition(sf::Vector2f(248.f, 100.f));
+    title.setFillColor(sf::Color(45, 30, 15));
+    w.draw(title);
+
+    drawBackbutton(w, font);
+
+    pii tmp = game.calculateScore();
+    double score1 = tmp.fi, score2 = tmp.se;
+    score2 += 7.5;
+
+    string str, P1, P2;
+    if (game.mode == 1)
+    {
+        P1 = "P1"; P2 = "P2";
+        if (score1 > score2) str = "P1 WIN";
+        else if (score1 < score2) str = "P2 WIN";
+    }
+    else 
+    {
+        P1 = "YOU"; P2 = "BOT";
+        if (score1 > score2) str = "YOU WIN";
+        else if (score1 < score2) str = "BOT WIN";
+    }
+    sf::Text text(font, str, 52);
+    float textWidth = text.getLocalBounds().size.x;
+    text.setPosition({(800 - textWidth) / 2.f, 190.f});
+    text.setFillColor(sf::Color(45, 30, 15));
+    w.draw(text);
+
+    if (game.stoneTheme == 0)
+    {
+        sf::CircleShape blackStone(60.f);
+        blackStone.setOrigin({60.f, 60.f});
+        blackStone.setPosition({400.f, 370.f});
+        blackStone.setFillColor(sf::Color(25, 25, 25));
+        blackStone.setOutlineThickness(1.f);
+        blackStone.setOutlineColor(sf::Color(70, 70, 70));
+        w.draw(blackStone);
+
+        sf::CircleShape whiteStone(60.f);
+        whiteStone.setOrigin({60.f, 60.f});
+        whiteStone.setPosition({400.f, 540.f});
+        whiteStone.setFillColor(sf::Color(250, 250, 250));
+        whiteStone.setOutlineThickness(1.f);
+        whiteStone.setOutlineColor(sf::Color(150, 150, 150));
+        w.draw(whiteStone);
+    }
+    else 
+    {
+        sf::Sprite fire(fireTexture);
+        sf::Vector2f fireSize = fire.getLocalBounds().size;
+        fire.setOrigin(fireSize / 2.f);
+        fire.setScale({
+            130.f / fireSize.x,
+            130.f / fireSize.y
+        });
+        fire.setPosition({400.f, 370.f});
+        w.draw(fire);
+
+        sf::Sprite water(waterTexture);
+        sf::Vector2f waterSize = water.getLocalBounds().size;
+        water.setOrigin(waterSize / 2.f);
+        water.setScale({
+            130.f / waterSize.x,
+            130.f / waterSize.y
+        });
+        water.setPosition({400.f, 540.f});
+        w.draw(water);
+    }
+
+    stringstream ss;
+    
+    ss << fixed << setprecision(1) << score1;
+    sf::Text scorep1(font, ss.str(), 52);
+    scorep1.setPosition(sf::Vector2f(540.f, 335.f));
+    scorep1.setFillColor(sf::Color(45, 30, 15));
+    w.draw(scorep1);
+
+    ss.str("");
+    ss.clear();
+
+    ss << fixed << setprecision(1) << score2;
+    sf::Text scorep2(font, ss.str(), 52);
+    scorep2.setPosition(sf::Vector2f(540.f, 505.f));
+    scorep2.setFillColor(sf::Color(45, 30, 15));
+    w.draw(scorep2);
+
+    sf::Text text1(font, P1, 52);
+    text1.setPosition(sf::Vector2f(200.f, 335.f));
+    text1.setFillColor(sf::Color(45, 30, 15));
+    w.draw(text1);
+
+    sf::Text text2(font, P2, 52);
+    text2.setPosition(sf::Vector2f(200.f, 505.f));
+    text2.setFillColor(sf::Color(45, 30, 15));
+    w.draw(text2);
 }

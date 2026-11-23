@@ -39,9 +39,9 @@ bool Game::checkGameOver()
     if (passCount >= 2) return 1;
     return 0;
 }
-int Game::calculateScore()
+pii Game::calculateScore()
 {
-    return 0;
+    return {0, 0};
 }
 bool Game::checkKo(Board &board, int i, int j)
 {

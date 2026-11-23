@@ -19,6 +19,7 @@ bool changing[4] = {1, 1, 1, 1};
 // 1 : setting
 // 2 : difficulty menu
 // 3 : board
+// 4 : game over
 Game game;
 UI ui;
 AI ai;
@@ -41,6 +42,15 @@ void playSound()
     if (!game.soundEnabled) return;
     if (!checkcapture()) audio.playPlace(game.soundVolume);
     else audio.playCapture(game.soundVolume);
+}
+void AIplay()
+{
+    game.passCount = 0;
+    game.turn = 3 - game.turn;
+    this_thread::sleep_for(chrono::milliseconds(100));
+    game.highlight = ai.makemove(game.board, game.turn, game.difficult, game);
+    playSound();
+    game.undoStack.push({game.board, game.highlight, game.passCount});
 }
 void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
 {
@@ -75,34 +85,30 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 {
                     if (!game.completeMove(game.board, i, j, 1, 0))
                     return;
-                    
+                    game.passCount = 0;
                     game.turn = 3 - game.turn;
                     game.highlight = {i, j};
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
                     w.display();
                     playSound();
-                    game.undoStack.push({game.board, game.highlight});
+                    game.undoStack.push({game.board, game.highlight, game.passCount});
                     while (!game.redoStack.empty()) game.redoStack.pop();
 
-                    game.turn = 3 - game.turn;
-                    this_thread::sleep_for(chrono::milliseconds(100));
-                    game.highlight = ai.makemove(game.board, 2, game.difficult, game);
-                    playSound();
-                    //                                    turn, dif
-                    game.undoStack.push({game.board, game.highlight});
+                    AIplay();
                 }
                 else 
                 {
                     if (!game.completeMove(game.board, i, j, 3 - game.turn, 0))
                     return;
+                    game.passCount = 0;
                     game.turn = 3 - game.turn;
                     game.highlight = {i, j};
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
                     w.display();
                     playSound();
-                    game.undoStack.push({game.board, game.highlight});
+                    game.undoStack.push({game.board, game.highlight, game.passCount});
                     while (!game.redoStack.empty()) game.redoStack.pop();
                 }
             }
@@ -136,6 +142,20 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 if (game.mode == 1) check = game.loadGame(savefile[0]);
                 else check = game.loadGame(savefile[game.difficult]);
                 saveload = 1; tmpcheck = check;
+            }
+            else if (sf::FloatRect({655.f, 405.f}, {100.f, 45.f}).contains(pos))
+            {
+                game.passTurn();
+                game.highlight = {-1, -1};
+                w.clear(sf::Color(40, 40, 40));
+                ui.drawBoard(w, font, game);
+                w.display();
+                game.undoStack.push({game.board, game.highlight, game.passCount});
+                while (!game.redoStack.empty()) game.redoStack.pop();
+                
+                if (game.checkGameOver()) screen = 4;
+
+                if (game.mode == 2) AIplay();
             }
             changing[screen] = 1;
         }
@@ -340,6 +360,7 @@ int main()
                     ui.drawNotification(w, font, tmpcheck, saveload);
                 }
             }
+            else if (screen == 4) ui.drawGameover(w, font, game);
             w.display();
             changing[screen] = 0;
         }

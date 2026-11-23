@@ -21,7 +21,7 @@ void Game::reset()
     highlight = {-1, -1};      
     while (!undoStack.empty()) undoStack.pop();
     while (!redoStack.empty()) redoStack.pop();
-    undoStack.push({board, {-1, -1}});
+    undoStack.push({board, {-1, -1}, 0});
 }
 bool Game::playMove(Board &board, int i, int j, int turn)
 {
@@ -157,7 +157,7 @@ void Game::undo()
         undoStack.pop();
         redoStack.push(tmp);
         tmp = undoStack.top();
-        board = tmp.board; highlight = tmp.highlight;
+        board = tmp.board; highlight = tmp.highlight; passCount = tmp.passCount;
         turn = 3 - turn;
     }
     else 
@@ -170,7 +170,7 @@ void Game::undo()
         undoStack.pop();
         redoStack.push(tmp);
         tmp = undoStack.top();
-        board = tmp.board; highlight = tmp.highlight;
+        board = tmp.board; highlight = tmp.highlight; passCount = tmp.passCount;
     }
 }
 void Game::redo()
@@ -181,7 +181,7 @@ void Game::redo()
         stackElement tmp = redoStack.top();
         redoStack.pop();
         undoStack.push(tmp);
-        board = tmp.board; highlight = tmp.highlight;
+        board = tmp.board; highlight = tmp.highlight; passCount = tmp.passCount;
         turn = 3 - turn;
     }
     else 
@@ -193,7 +193,7 @@ void Game::redo()
         tmp = redoStack.top();
         redoStack.pop();
         undoStack.push(tmp);
-        board = tmp.board; highlight = tmp.highlight;
+        board = tmp.board; highlight = tmp.highlight; passCount = tmp.passCount;
     }
 }
 bool Game::saveGame(string filename)
@@ -204,7 +204,6 @@ bool Game::saveGame(string filename)
     file << turn << "\n";
     file << difficult << "\n";
     file << gameOver << "\n";
-    file << passCount << "\n";
 
     stack<stackElement> tmp, rollback = undoStack;
     file << undoStack.size() << "\n";
@@ -220,6 +219,7 @@ bool Game::saveGame(string filename)
             file << "\n";
         }
         file << x.highlight.fi << " " << x.highlight.se << "\n";
+        file << x.passCount << "\n";
         tmp.pop();
     }
     
@@ -237,6 +237,7 @@ bool Game::saveGame(string filename)
             file << "\n";
         }
         file << x.highlight.fi << " " << x.highlight.se << "\n";
+        file << x.passCount << "\n";
         tmp.pop();
     }
 
@@ -254,7 +255,6 @@ bool Game::loadGame(string filename)
     turn = temp;
     file >> difficult;
     file >> gameOver;
-    file >> passCount;
 
     while (!undoStack.empty()) undoStack.pop();
     while (!redoStack.empty()) redoStack.pop();
@@ -267,6 +267,7 @@ bool Game::loadGame(string filename)
         for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++) file >> tmp.board.a[i][j];
         file >> tmp.highlight.fi >> tmp.highlight.se;
+        file >> tmp.passCount;
         undoStack.push(tmp);
     }    
 
@@ -277,11 +278,13 @@ bool Game::loadGame(string filename)
         for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++) file >> tmp.board.a[i][j];
         file >> tmp.highlight.fi >> tmp.highlight.se;
+        file >> tmp.passCount;
         redoStack.push(tmp);
     }  
 
     board = undoStack.top().board;
     highlight = undoStack.top().highlight;
+    passCount = undoStack.top().passCount;
 
     file.close();
     return 1;

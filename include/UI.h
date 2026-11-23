@@ -23,4 +23,6 @@ class UI
     void drawMenu(sf::RenderWindow &w, sf::Font &font);
 
     void drawDifficultyMenu(sf::RenderWindow &w, sf::Font &font);
+
+    void drawGameover(sf::RenderWindow &w, sf::Font &font, Game &game);
 };

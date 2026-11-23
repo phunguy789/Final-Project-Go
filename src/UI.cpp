@@ -454,6 +454,20 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
             w.draw(water);
         }
     }    
+
+    //PASS
+    sf::RectangleShape passturnButton({100.f, 45.f});
+    passturnButton.setPosition({655.f, 405.f});
+    passturnButton.setFillColor(sf::Color(245, 222, 179));
+    passturnButton.setOutlineThickness(2.f);
+    passturnButton.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text passturnText(font, "PASS TURN", 17);
+    passturnText.setPosition({658.f, 415.f});
+    passturnText.setFillColor(sf::Color::Black);
+
+    w.draw(passturnButton);
+    w.draw(passturnText);
 }
 void UI::drawNotification(sf::RenderWindow &w, sf::Font &font, bool check, bool type)
 {
@@ -573,4 +587,11 @@ void UI::drawDifficultyMenu(sf::RenderWindow &w, sf::Font &font)
     w.draw(button2); w.draw(text2);
     w.draw(button3); w.draw(text3);
     drawBackbutton(w, font);
+}
+void UI::drawGameover(sf::RenderWindow &w, sf::Font &font, Game &game)
+{
+    sf::RectangleShape background(sf::Vector2f(800.f, 800.f));
+    background.setPosition(sf::Vector2f(0.f, 0.f));
+    background.setFillColor(sf::Color(243, 235, 221));
+    w.draw(background);
 }

@@ -10,6 +10,7 @@ struct stackElement
 {
     Board board;
     pii highlight;
+    int passCount;
 };
 class Game
 {

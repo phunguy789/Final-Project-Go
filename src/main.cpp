@@ -75,7 +75,8 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 {
                     if (!game.completeMove(game.board, i, j, 1, 0))
                     return;
-
+                    
+                    game.turn = 3 - game.turn;
                     game.highlight = {i, j};
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
@@ -84,6 +85,7 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                     game.undoStack.push({game.board, game.highlight});
                     while (!game.redoStack.empty()) game.redoStack.pop();
 
+                    game.turn = 3 - game.turn;
                     this_thread::sleep_for(chrono::milliseconds(100));
                     game.highlight = ai.makemove(game.board, 2, game.difficult, game);
                     playSound();

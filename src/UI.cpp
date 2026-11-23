@@ -389,6 +389,71 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
 
     w.draw(loadgameButton);
     w.draw(loadgameText);
+
+    //TURN
+    sf::RectangleShape turnButton({100.f, 120.f});
+    turnButton.setPosition({655.f, 270.f});
+    turnButton.setFillColor(sf::Color(245, 222, 179));
+    turnButton.setOutlineThickness(2.f);
+    turnButton.setOutlineColor(sf::Color(75, 45, 20));
+
+    sf::Text turnText(font, "TURN", 20);
+    turnText.setPosition({678.f, 280.f});
+    turnText.setFillColor(sf::Color::Black);
+
+    w.draw(turnButton);
+    w.draw(turnText);
+
+    if (game.stoneTheme == 0)
+    {
+        if (3 - game.turn == 1)
+        {
+            sf::CircleShape blackStone(30.f);
+            blackStone.setOrigin({30.f, 30.f});
+            blackStone.setPosition({705.f, 343.f});
+            blackStone.setFillColor(sf::Color(25, 25, 25));
+            blackStone.setOutlineThickness(1.f);
+            blackStone.setOutlineColor(sf::Color(70, 70, 70));
+            w.draw(blackStone);
+        }
+        else 
+        {
+            sf::CircleShape whiteStone(30.f);
+            whiteStone.setOrigin({30.f, 30.f});
+            whiteStone.setPosition({705.f, 343.f});
+            whiteStone.setFillColor(sf::Color(250, 250, 250));
+            whiteStone.setOutlineThickness(1.f);
+            whiteStone.setOutlineColor(sf::Color(150, 150, 150));
+            w.draw(whiteStone);
+        }
+    }
+    else
+    {
+        if (3 - game.turn == 1)
+        {
+            sf::Sprite fire(fireTexture);
+            sf::Vector2f fireSize = fire.getLocalBounds().size;
+            fire.setOrigin(fireSize / 2.f);
+            fire.setScale({
+                65.f / fireSize.x,
+                65.f / fireSize.y
+            });
+            fire.setPosition({705.f, 343.f});
+            w.draw(fire);
+        }
+        else 
+        {
+            sf::Sprite water(waterTexture);
+            sf::Vector2f waterSize = water.getLocalBounds().size;
+            water.setOrigin(waterSize / 2.f);
+            water.setScale({
+                65.f / waterSize.x,
+                65.f / waterSize.y
+            });
+            water.setPosition({705.f, 343.f});
+            w.draw(water);
+        }
+    }    
 }
 void UI::drawNotification(sf::RenderWindow &w, sf::Font &font, bool check, bool type)
 {

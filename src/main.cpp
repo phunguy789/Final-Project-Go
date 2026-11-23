@@ -12,7 +12,7 @@ using namespace std;
 using pii = pair<int, int>;
 #define fi first 
 #define se second
-const string savefile[1] = {"save.txt"};
+const string savefile[4] = {"save.txt", "save_ai_easy.txt", "save_ai_medium.txt", "save_ai_hard.txt"};
 int screen = 0, debug;
 bool changing[4] = {1, 1, 1, 1};
 // 0 : menu
@@ -125,19 +125,17 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
             }
             else if (sf::FloatRect({655.f, 150.f}, {100.f, 45.f}).contains(pos))
             {
-                if (game.mode == 1)
-                {
-                    bool check = game.saveGame(savefile[0]);
-                    saveload = 0; tmpcheck = check;
-                }
+                bool check;
+                if (game.mode == 1) check = game.saveGame(savefile[0]);
+                else check = game.saveGame(savefile[game.difficult]);
+                saveload = 0; tmpcheck = check;
             }
             else if (sf::FloatRect({655.f, 210.f}, {100.f, 45.f}).contains(pos))
             {
-                if (game.mode == 1)
-                {
-                    bool check = game.loadGame(savefile[0]);
-                    saveload = 1; tmpcheck = check;
-                }
+                bool check;
+                if (game.mode == 1) check = game.loadGame(savefile[0]);
+                else check = game.loadGame(savefile[game.difficult]);
+                saveload = 1; tmpcheck = check;
             }
             changing[screen] = 1;
         }

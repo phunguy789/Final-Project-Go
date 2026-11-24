@@ -470,25 +470,47 @@ void UI::drawBoard(sf::RenderWindow &w, sf::Font &font, Game &game)
     w.draw(passturnButton);
     w.draw(passturnText);
 }
-void UI::drawNotification(sf::RenderWindow &w, sf::Font &font, bool check, bool type)
+void UI::drawNotification(sf::RenderWindow &w, sf::Font &font, bool check, int type, int cnt)
 {
     string str;
-    if (type == 0)
+    if (type < 2)
     {
-        str = "SAVED";
-        if (!check) str = "SAVE";
+        if (type == 0)
+        {
+            str = "SAVED";
+            if (!check) str = "SAVE";
+        }
+        else 
+        {
+            str = "LOADED";
+            if (!check) str = "LOAD";
+        }
+        if (check) str += " SUCCESSFULLY";
+        else str += " FAILED";
+        sf::Text NotifiText(font, str, 30);
+        NotifiText.setPosition({200.f, 650.f});
+        NotifiText.setFillColor(sf::Color::White);
+        w.draw(NotifiText);
     }
-    else 
+    else if (type == 2)
     {
-        str = "LOADED";
-        if (!check) str = "LOAD";
+        str = to_string(cnt);
+        str = " Captured " + str + " stone";
+        if (cnt > 1) str += "s!"; else str += "!";
+        sf::Text NotifiText(font, str, 30);
+        NotifiText.setPosition({200.f, 650.f});
+        NotifiText.setFillColor(sf::Color::White);
+        w.draw(NotifiText);
     }
-    if (check) str += " SUCCESSFULLY";
-    else str += " FAILED";
-    sf::Text NofiText(font, str, 30);
-    NofiText.setPosition({200.f, 650.f});
-    NofiText.setFillColor(sf::Color::White);
-    w.draw(NofiText);
+    else if (type == 3)
+    {
+        // cout << "???";
+        str = "KO threat!";
+        sf::Text NotifiText(font, str, 30);
+        NotifiText.setPosition({200.f, 650.f});
+        NotifiText.setFillColor(sf::Color::White);
+        w.draw(NotifiText);
+    }
 }
 void UI::drawMenu(sf::RenderWindow &w, sf::Font &font)
 {

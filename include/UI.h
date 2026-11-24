@@ -9,7 +9,7 @@ class UI
     
     UI();
 
-    void drawNotification(sf::RenderWindow &w, sf::Font &font, bool check, bool type);
+    void drawNotification(sf::RenderWindow &w, sf::Font &font, bool check, int type, int cnt);
 
     void drawSetting(sf::RenderWindow &w, sf::Font &font, Game &game);
     void drawBackbutton(sf::RenderWindow &w, sf::Font &font);

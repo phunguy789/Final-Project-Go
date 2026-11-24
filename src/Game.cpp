@@ -21,6 +21,8 @@ void Game::reset()
     gameOver = false;    
     passCount = 0; 
     highlight = {-1, -1};      
+    tempval = 0;
+    tempInvalid = 0;
     while (!undoStack.empty()) undoStack.pop();
     while (!redoStack.empty()) redoStack.pop();
     undoStack.push({board, {-1, -1}, 0});
@@ -77,9 +79,7 @@ pii Game::calculateScore()
         if (borderBlack && !borderWhite) territoryBlack += cnt;
         else if (borderWhite && !borderBlack) territoryWhite += cnt;
     }
-    black += territoryBlack;
-    white += territoryWhite;
-    return {black, white};
+    return {black + territoryBlack, white + territoryWhite};
 }
 bool Game::checkKo(Board &board, int i, int j)
 {
@@ -109,6 +109,7 @@ bool Game::completeMove(Board &board, int i, int j, int turn, bool rollback)
     if (checkKo(board, i, j)) 
     {
         board = oldboard;
+        tempInvalid = 1;
         return 0;
     }
     if (isSuicide(board, i, j))

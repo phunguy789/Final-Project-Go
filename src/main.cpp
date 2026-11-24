@@ -24,8 +24,8 @@ Game game;
 UI ui;
 AI ai;
 Audio audio;
-int saveload = 2, tmpcheck = 2;
-// 0 : fail , 1 : success , 2 : no display
+int notifiState = 4, tmpcheck, cnt;
+// 0 : save , 1 : load , 2 : stone capture , 3 : KO threat , 4 : non
 bool checkcapture()
 {
     int cnt1 = 0, cnt2 = 0;
@@ -45,10 +45,27 @@ void playSound()
 }
 void AIplay()
 {
+    if (game.passCount == 1)
+    {
+        pii tmp = game.calculateScore();
+        double p1 = tmp.fi, p2 = tmp.se;
+        if (p2 + 7.5 > p1)
+        {
+            game.passCount++;
+            game.turn = 3 - game.turn;
+            return;
+        }
+    }
     game.passCount = 0;
     game.turn = 3 - game.turn;
-    this_thread::sleep_for(chrono::milliseconds(100));
+    this_thread::sleep_for(chrono::milliseconds(300));
     game.highlight = ai.makemove(game.board, game.turn, game.difficult, game);
+    if (game.tempval > 0)
+    {
+        notifiState = 2;
+        cnt = game.tempval;
+        game.tempval = 0;
+    }
     playSound();
     game.undoStack.push({game.board, game.highlight, game.passCount});
 }
@@ -58,9 +75,9 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
     // {
     //     w.clear(sf::Color(40, 40, 40));
     //     ui.drawBoard(w, font, game);
-    //     if (saveload != 2)
+    //     if (notifiState != 4)
     //     {
-    //         ui.drawNotification(w, font, tmpcheck, saveload);
+    //         ui.drawNotification(w, font, tmpcheck, notifiState, 0);
     //     }
     //     w.display();
     //     changing[screen] = 0;
@@ -69,7 +86,9 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
     {
         if (m->button == sf::Mouse::Button::Left)
         {
-            saveload = 2;
+            notifiState = 4; // delete old notification
+            changing[screen] = 1;
+
             sf::Vector2f pos = w.mapPixelToCoords(m->position);
 
             float x0 = 50.f;
@@ -84,14 +103,38 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 if (game.mode == 2)
                 {
                     if (!game.completeMove(game.board, i, j, 1, 0))
-                    return;
-
+                    {
+                        if (game.tempInvalid == 1)
+                        {
+                            notifiState = 3;
+                            w.clear(sf::Color(40, 40, 40));
+                            ui.drawBoard(w, font, game);
+                            ui.drawNotification(w, font, tmpcheck, notifiState, cnt);
+                            w.display();
+                            notifiState = 4;
+                            game.tempInvalid = 0;
+                            changing[screen] = 0;
+                        }
+                        return;
+                    }
+                    if (game.tempval > 0)
+                    {
+                        notifiState = 2;
+                        cnt = game.tempval;
+                        game.tempval = 0;
+                    }
                     game.black += game.tempval;
                     game.passCount = 0;
                     game.turn = 3 - game.turn;
                     game.highlight = {i, j};
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
+                    if (notifiState != 4)
+                    {
+                        ui.drawNotification(w, font, tmpcheck, notifiState, cnt);
+                        cnt = 0;
+                        notifiState = 4;
+                    }
                     w.display();
                     playSound();
                     game.undoStack.push({game.board, game.highlight, game.passCount});
@@ -102,12 +145,31 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 else 
                 {
                     if (!game.completeMove(game.board, i, j, 3 - game.turn, 0))
-                    return;
+                    {
+                        if (game.tempInvalid == 1)
+                        {
+                            notifiState = 3;
+                            w.clear(sf::Color(40, 40, 40));
+                            ui.drawBoard(w, font, game);
+                            ui.drawNotification(w, font, tmpcheck, notifiState, cnt);
+                            w.display();
+                            notifiState = 4;
+                            game.tempInvalid = 0;
+                            changing[screen] = 0;
+                        }
+                        return;
+                    }
 
                     game.passCount = 0;
                     game.turn = 3 - game.turn;
                     if (game.turn == 1) game.black += game.tempval;
                     else game.white += game.tempval;
+                    if (game.tempval > 0)
+                    {
+                        notifiState = 2;
+                        cnt = game.tempval;
+                        game.tempval = 0;
+                    }
                     game.highlight = {i, j};
                     w.clear(sf::Color(40, 40, 40));
                     ui.drawBoard(w, font, game);
@@ -139,14 +201,14 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 bool check;
                 if (game.mode == 1) check = game.saveGame(savefile[0]);
                 else check = game.saveGame(savefile[game.difficult]);
-                saveload = 0; tmpcheck = check;
+                notifiState = 0; tmpcheck = check;
             }
             else if (sf::FloatRect({655.f, 210.f}, {100.f, 45.f}).contains(pos))
             {
                 bool check;
                 if (game.mode == 1) check = game.loadGame(savefile[0]);
                 else check = game.loadGame(savefile[game.difficult]);
-                saveload = 1; tmpcheck = check;
+                notifiState = 1; tmpcheck = check;
             }
             else if (sf::FloatRect({655.f, 405.f}, {100.f, 45.f}).contains(pos))
             {
@@ -161,13 +223,19 @@ void BoardOperation(sf::RenderWindow &w, sf::Font &font, const sf::Event* event)
                 if (game.checkGameOver())
                 {
                     screen = 4;
-                    changing[screen] = 1;
                     return;
                 }
 
-                if (game.mode == 2) AIplay();
+                if (game.mode == 2)
+                {
+                    AIplay();
+                    if (game.checkGameOver())
+                    {
+                        screen = 4;
+                        return;
+                    }
+                }
             }
-            changing[screen] = 1;
         }
     }
 }
@@ -385,9 +453,10 @@ int main()
             else if (screen == 3) 
             {
                 ui.drawBoard(w, font, game);
-                if (saveload != 2)
+                if (notifiState != 4)
                 {
-                    ui.drawNotification(w, font, tmpcheck, saveload);
+                    ui.drawNotification(w, font, tmpcheck, notifiState, cnt);
+                    cnt = 0;
                 }
             }
             else if (screen == 4) ui.drawGameover(w, font, game);

@@ -200,21 +200,24 @@ pii AI::makemove(Board &board, int turn, int difficult, Game &game)
         int x, y;
         x = empty_pos[pos].fi; 
         y = empty_pos[pos].se;
-        game.white += game.playMove(board, x, y, turn);
+        game.tempval = game.playMove(board, x, y, turn); 
+        game.white += game.tempval;
         return {x, y};
     }
     else if (difficult == 2)
     {
         int depth = 1;
         pii move = findBestMove(board, depth, turn, game);
-        game.white += game.playMove(board, move.fi, move.se, turn);
+        game.tempval = game.playMove(board, move.fi, move.se, turn);
+        game.white += game.tempval;
         return move;
     }
     else if (difficult == 3)
     {
         int depth = 2;
         pii move = findBestMove(board, depth, turn, game);
-        game.white += game.playMove(board, move.fi, move.se, turn);
+        game.tempval = game.playMove(board, move.fi, move.se, turn);
+        game.white += game.tempval;
         return move;
     }
     return {0, 0};

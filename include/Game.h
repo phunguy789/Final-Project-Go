@@ -37,7 +37,7 @@ class Game
 
     bool par_vis[N][N];
     pii tempPos, highlight;
-    int tempval;
+    int tempval, tempInvalid;
     int calScore[5] = {0, -15, -5, 2, 3};
 
     Game();
